@@ -1,5 +1,6 @@
 <script lang="ts">
   import favicon from '$lib/assets/favicon.svg';
+  import '@fontsource-variable/inter';
   import '../app.css';
 
   let { children } = $props();
@@ -9,6 +10,13 @@
   <link rel="icon" href={favicon} />
 </svelte:head>
 
-<nav class="crisp-border sticky top-0 z-10 h-16 bg-white"></nav>
-
 {@render children?.()}
+
+<style>
+  :global(body) {
+    font-family: 'Inter Variable', sans-serif;
+    font-feature-settings:
+      'liga' 1,
+      'calt' 1;
+  }
+</style>
