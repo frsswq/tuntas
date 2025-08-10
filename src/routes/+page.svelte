@@ -1,17 +1,18 @@
 <script lang="ts">
-  import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
-  import Label from '@/lib/components/ui/label/label.svelte';
-  import TableContainer from '../lib/components/table-container.svelte';
+  import NoteContainer from '@/lib/components/note-container.svelte';
 
   const randTaskId = `task-${Math.random().toString(36).slice(2, 9)}`;
 </script>
+
+<!-- @TODO: refactor ui to be simple notepad to do list, max 10 to do  -->
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
     class="flex min-h-dvh w-full items-center justify-center overflow-x-scroll bg-slate-50 p-20"
   >
     <div class="flex w-full max-w-[1440px] items-stretch justify-center gap-x-3">
-      <TableContainer tableTitle="To Do">
+      <NoteContainer tableTitle="Today" />
+      <!-- <TableContainer tableTitle="To Do">
         <div class="flex flex-col gap-y-1.5 px-1">
           <div class="flex items-center gap-x-1.5 rounded-sm border p-1.5">
             <Checkbox id={randTaskId} class="peer shadow-none" />
@@ -25,7 +26,7 @@
         </div>
       </TableContainer>
       <TableContainer tableTitle="Doing" />
-      <TableContainer tableTitle="Done" />
+      <TableContainer tableTitle="Done" /> -->
     </div>
   </section>
 </main>
