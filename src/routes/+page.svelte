@@ -2,11 +2,7 @@
   import NoteContainer from '@/lib/components/note-container.svelte';
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
   import Input from '@/lib/components/ui/input/input.svelte';
-
-  const randTaskId = `task-${Math.random().toString(36).slice(2, 9)}`;
 </script>
-
-<!-- @TODO: refactor ui to be simple notepad to do list, max 10 to do  -->
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
@@ -17,9 +13,10 @@
         <div class="flex flex-col gap-y-2.5 pb-5">
           {#each { length: 10 } as todo}
             <div class="flex w-full items-center gap-x-2 px-2.5">
+              <!-- @TODO: make the checkbox feel more analog -->
               <Checkbox class="peer size-5 rounded-full border border-slate-300 shadow-none" />
               <Input
-                class="h-5.5 w-full rounded-none border border-transparent border-b-slate-300 px-0.5 text-lg text-slate-500  caret-slate-500 shadow-none focus-visible:border-transparent focus-visible:border-b-slate-300 focus-visible:ring-0 md:text-lg"
+                class="handwritten h-5.5 w-full rounded-none border border-transparent border-b-slate-300 px-0.5 text-lg text-slate-700 caret-slate-500 shadow-none focus-visible:border-transparent focus-visible:border-b-slate-300 focus-visible:ring-0  md:text-lg"
               />
             </div>
           {/each}
