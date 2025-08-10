@@ -1,5 +1,7 @@
 <script lang="ts">
   import NoteContainer from '@/lib/components/note-container.svelte';
+  import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
+  import Input from '@/lib/components/ui/input/input.svelte';
 
   const randTaskId = `task-${Math.random().toString(36).slice(2, 9)}`;
 </script>
@@ -11,22 +13,18 @@
     class="flex min-h-dvh w-full items-center justify-center overflow-x-scroll bg-slate-50 p-20"
   >
     <div class="flex w-full max-w-[1440px] items-stretch justify-center gap-x-3">
-      <NoteContainer tableTitle="Today" />
-      <!-- <TableContainer tableTitle="To Do">
-        <div class="flex flex-col gap-y-1.5 px-1">
-          <div class="flex items-center gap-x-1.5 rounded-sm border p-1.5">
-            <Checkbox id={randTaskId} class="peer shadow-none" />
-            <Label
-              for={randTaskId}
-              class="cursor-pointer text-[13px] text-slate-800 peer-data-[state=checked]:line-through "
-              >Task 1</Label
-            >
-          </div>
-          <Checkbox class="shadow-none" />
+      <NoteContainer tableTitle="Today">
+        <div class="flex flex-col gap-y-2.5 pb-5">
+          {#each { length: 10 } as todo}
+            <div class="flex w-full items-center gap-x-2 px-2.5">
+              <Checkbox class="peer size-5 rounded-full border border-slate-300 shadow-none" />
+              <Input
+                class="h-5.5 w-full rounded-none border border-transparent border-b-slate-300 px-0.5 text-lg text-slate-500  caret-slate-500 shadow-none focus-visible:border-transparent focus-visible:border-b-slate-300 focus-visible:ring-0 md:text-lg"
+              />
+            </div>
+          {/each}
         </div>
-      </TableContainer>
-      <TableContainer tableTitle="Doing" />
-      <TableContainer tableTitle="Done" /> -->
+      </NoteContainer>
     </div>
   </section>
 </main>
