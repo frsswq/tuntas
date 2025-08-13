@@ -27,7 +27,7 @@
   {#snippet children({ checked, indeterminate })}
     <div data-slot="checkbox-indicator" class="text-current transition-none">
       {#if checked}
-        <XIcon class="size-6 text-slate-800" />
+        <XIcon class="size-6 text-slate-600" />
         <!-- <CheckIcon class="size-3.5" /> -->
       {:else if indeterminate}
         <MinusIcon class="size-3.5" />

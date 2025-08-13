@@ -15,9 +15,9 @@
   .lined-background {
     background-image: repeating-linear-gradient(
       transparent,
-      transparent 1.25rem,
-      #cbd5e1 1.25rem,
-      #cbd5e1 1.3rem
+      transparent 1.7rem,
+      #cbd5e1 1.7rem,
+      #cbd5e1 1.75rem
     );
     background-attachment: local;
   }
