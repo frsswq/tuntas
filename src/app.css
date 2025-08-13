@@ -11,6 +11,16 @@
   .handwritten {
     font-family: 'Iansui', cursive;
   }
+
+  .lined-background {
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 1.4375rem,
+      #cbd5e1 1.4375rem,
+      #cbd5e1 1.5rem
+    );
+    background-attachment: local;
+  }
 }
 
 @custom-variant dark (&:is(.dark *));

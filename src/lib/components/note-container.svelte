@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { cn } from '../utils';
   import Input from './ui/input/input.svelte';
-  let { children = null, tableTitle } = $props();
+  let { children = null, tableTitle, containerClass = '' } = $props();
 </script>
 
-<div class="border-crips flex h-full w-full max-w-[300px] flex-col gap-y-2.5 rounded-md bg-white">
+<div
+  class={cn(
+    'border-crips flex h-full w-full max-w-full flex-col gap-y-2.5 rounded-md bg-white sm:max-w-[325px]',
+    containerClass
+  )}
+>
   <div
     class="flex items-end justify-between border border-transparent border-b-slate-300 px-2.5 pt-2 pb-2 tracking-tighter"
   >
