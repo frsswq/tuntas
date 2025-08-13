@@ -6,7 +6,7 @@
 
 <div
   class={cn(
-    'border-crips flex h-full w-full max-w-full flex-col gap-y-2.5 rounded-md bg-white sm:max-w-[325px]',
+    'border-crips flex h-full w-full max-w-full flex-col gap-y-1.5 rounded-md bg-white sm:max-w-[325px]',
     containerClass
   )}
 >
