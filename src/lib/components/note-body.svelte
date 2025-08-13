@@ -16,11 +16,15 @@
     {#each { length: 10 } as todo}
       <div class="flex w-full max-w-full items-start gap-x-2 px-2.5">
         <!-- @TODO: make the checkbox feel more analog -->
-        <Checkbox class="peer mt-0.5 size-5 rounded-full border border-slate-300 shadow-none" />
+        <Checkbox
+          class={cn(
+            'peer size-5 rounded-xs border border-slate-300 shadow-none',
+            'data-[state=checked]:border-slate-800 data-[state=checked]:bg-white'
+          )}
+        />
         <Textarea
           class={cn(
-            'lined-background h-6 min-h-6 w-full resize-none overflow-hidden rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-6 font-[350] text-slate-500 decoration-[1.5px] caret-slate-500 shadow-none sm:text-lg',
-            'peer-data-[state=checked]:line-through',
+            'lined-background h-6 min-h-6 w-full resize-none overflow-hidden rounded-none border-0 bg-transparent px-0.5 py-0 text-base leading-5 font-[400] tracking-tighter text-slate-700 caret-slate-500 shadow-none sm:text-base',
             'transition-all duration-200 ease-out',
             'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
           )}
