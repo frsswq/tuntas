@@ -6,8 +6,16 @@
 
   function handleTextareaInput(e: Event) {
     const el = e.currentTarget as HTMLTextAreaElement;
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 20;
+    const maxHeight = lineHeight * 3;
+
+    if (el.scrollHeight > maxHeight) {
+      el.value = el.value.slice(0, -1);
+      return;
+    }
+
     el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
+    el.style.height = Math.min(el.scrollHeight, maxHeight) + 'px';
   }
 </script>
 
@@ -24,14 +32,13 @@
         />
         <Textarea
           class={cn(
-            'lined-background min-h-7 w-full resize-none overflow-hidden rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter text-slate-600 caret-slate-600 shadow-none sm:text-lg',
+            'lined-background min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter text-slate-600 caret-slate-600 shadow-none sm:text-lg',
             'transition-all duration-200 ease-out',
             'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
           )}
           oninput={handleTextareaInput}
           spellcheck="false"
           autocomplete="off"
-          maxlength={50}
           rows={1}
         />
       </div>
