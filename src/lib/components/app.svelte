@@ -1,14 +1,35 @@
 <script lang="ts">
-  import NoteMain from './note-main.svelte';
+  import TodoMain from './note/todo-main.svelte';
+  const title = ['Today', 'Next', 'Someday'];
+  const color = ['slate', 'orange', 'blue'];
+
+  let positions = [0, 1, 2];
+
+  function cycleCards() {
+    positions = [...positions.slice(1), positions[0]];
+  }
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
-    class="flex min-h-dvh w-full items-center justify-center overflow-x-scroll bg-slate-50 p-8 sm:py-20"
+    class="relative flex min-h-dvh w-full items-center justify-center overflow-x-scroll bg-slate-50 p-8"
   >
-    <div class="flex w-full max-w-[1440px] items-stretch justify-center gap-x-3">
-      <NoteMain noteTitle="Today" />
-    </div>
+    {#each positions as pos, index}
+      <TodoMain
+        todoTitle={title[2 - index]}
+        color={color[2 - index]}
+        x={-pos * 20}
+        y={(pos - 1) * 20}
+        z={pos}
+      />
+    {/each}
+
+    <button
+      on:click={cycleCards}
+      class="absolute bottom-8 rounded bg-slate-200 px-4 py-2 hover:bg-slate-300"
+    >
+      Cycle Cards
+    </button>
   </section>
 </main>
 

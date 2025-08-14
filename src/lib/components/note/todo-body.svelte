@@ -1,7 +1,29 @@
 <script lang="ts">
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
-  import { cn } from '../utils';
-  import Textarea from './ui/textarea/textarea.svelte';
+  import { cn } from '@/lib/utils';
+  import Textarea from '../ui/textarea/textarea.svelte';
+
+  let { color = 'slate' }: { color?: keyof typeof colorClasses } = $props();
+  const colorClasses = {
+    slate: {
+      border: 'border-slate-300',
+      border_b: 'border-b-slate-300',
+      text: 'text-slate-600',
+      caret: 'caret-slate-600'
+    },
+    orange: {
+      border: 'border-orange-300',
+      border_b: 'border-b-orange-300',
+      text: 'text-orange-600',
+      caret: 'caret-orange-600'
+    },
+    blue: {
+      border: 'border-blue-300',
+      border_b: 'border-b-blue-300',
+      text: 'text-blue-600',
+      caret: 'caret-blue-600'
+    }
+  };
 
   const MAX_LINES = 3;
 
@@ -30,17 +52,17 @@
 </script>
 
 <div class="flex flex-col gap-y-1.5 pb-3">
-  {#each { length: 10 } as todo}
+  {#each { length: 10 } as _}
     <div class="flex w-full max-w-full items-start gap-x-2 px-2.5">
       <Checkbox
         class={cn(
-          'peer mt-1 size-5 rounded-xs border border-slate-300 shadow-none',
-          'data-[state=checked]:border-slate-500 data-[state=checked]:bg-white'
+          `peer mt-1 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
+          `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white`
         )}
       />
       <Textarea
         class={cn(
-          'lined-background min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter text-slate-600 caret-slate-600 shadow-none sm:text-lg',
+          `lined-background min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter ${colorClasses[color].text} ${colorClasses[color].caret} shadow-none sm:text-lg`,
           'transition-all duration-200 ease-out',
           'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
         )}
