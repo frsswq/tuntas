@@ -1,7 +1,8 @@
 <script lang="ts">
   import TodoMain from './note/todo-main.svelte';
   const title = ['Today', 'Next', 'Someday'];
-  const color = ['slate', 'orange', 'blue'];
+  const color = ['slate', 'teal', 'sky'];
+  const bg = ['bg-white', 'bg-teal-50', 'bg-sky-50'];
 
   let positions = [0, 1, 2];
 
@@ -21,6 +22,7 @@
         x={-pos * 20}
         y={(pos - 1) * 20}
         z={pos}
+        containerClass={bg[2 - index]}
       />
     {/each}
 

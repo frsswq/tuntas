@@ -1,29 +1,31 @@
 <script lang="ts">
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
-  import { cn } from '@/lib/utils';
+  import { cn, makeColorClasses, type ColorKeys } from '@/lib/utils';
   import Textarea from '../ui/textarea/textarea.svelte';
 
-  let { color = 'slate' }: { color?: keyof typeof colorClasses } = $props();
-  const colorClasses = {
+  const colorClasses = makeColorClasses({
     slate: {
       border: 'border-slate-300',
       border_b: 'border-b-slate-300',
       text: 'text-slate-600',
       caret: 'caret-slate-600'
     },
-    orange: {
-      border: 'border-orange-300',
-      border_b: 'border-b-orange-300',
-      text: 'text-orange-600',
-      caret: 'caret-orange-600'
+    teal: {
+      border: 'border-teal-300',
+      border_b: 'border-b-teal-300',
+      text: 'text-teal-600',
+      caret: 'caret-teal-600'
     },
-    blue: {
-      border: 'border-blue-300',
-      border_b: 'border-b-blue-300',
-      text: 'text-blue-600',
-      caret: 'caret-blue-600'
+    sky: {
+      border: 'border-sky-300',
+      border_b: 'border-b-sky-300',
+      text: 'text-sky-600',
+      caret: 'caret-sky-600'
     }
-  };
+  });
+
+  type Color = ColorKeys<typeof colorClasses>;
+  let { color = 'slate' }: { color?: Color } = $props();
 
   const MAX_LINES = 3;
 
