@@ -4,19 +4,59 @@
   import { cn } from '../utils';
   import Textarea from './ui/textarea/textarea.svelte';
 
-  function handleTextareaInput(e: Event) {
-    const el = e.currentTarget as HTMLTextAreaElement;
-    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 20;
-    const maxHeight = lineHeight * 3;
+  const MAX_LINES = 3;
 
-    if (el.scrollHeight > maxHeight) {
-      el.value = el.value.slice(0, -1);
-      return;
-    }
+  // const getLineCount = (str: string): number => (str ? str.split(/\r\n|\r|\n/).length : 1);
+  const getVisualLineCount = (el: HTMLTextAreaElement): number => {
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 20;
+    const actualHeight = el.scrollHeight;
+    return Math.ceil(actualHeight / lineHeight);
+  };
+
+  const handleTextareaInput = (e: Event) => {
+    const el = e.currentTarget as HTMLTextAreaElement;
 
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, maxHeight) + 'px';
-  }
+    const visualLines = getVisualLineCount(el);
+    if (visualLines > MAX_LINES) {
+      while (el.value.length > 0 && getVisualLineCount(el) > MAX_LINES) {
+        el.value = el.value.slice(0, -1);
+        el.style.height = 'auto';
+      }
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 20;
+    el.style.height = Math.min(el.scrollHeight, lineHeight * MAX_LINES) + 'px';
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const el = e.currentTarget as HTMLTextAreaElement;
+
+    if (e.key.length === 1 || e.key === 'Enter') {
+      const originalValue = el.value;
+      const originalHeight = el.style.height;
+
+      el.value = originalValue + (e.key === 'Enter' ? '\n' : e.key);
+      el.style.height = 'auto';
+
+      if (getVisualLineCount(el) > MAX_LINES) {
+        e.preventDefault();
+      }
+
+      el.value = originalValue;
+      el.style.height = originalHeight;
+    }
+  };
+
+  const handlePaste = (e: ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData?.getData('Text') || '';
+    const el = e.currentTarget as HTMLTextAreaElement;
+
+    el.value = pastedData;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  };
 </script>
 
 <NoteContainer tableTitle="Today">
@@ -37,6 +77,8 @@
             'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
           )}
           oninput={handleTextareaInput}
+          onkeydown={handleKeyDown}
+          onpaste={handlePaste}
           spellcheck="false"
           autocomplete="off"
           rows={1}
