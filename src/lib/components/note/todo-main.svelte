@@ -1,8 +1,19 @@
 <script lang="ts">
+  import type { ColorName } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import TodoBody from './todo-body.svelte';
   import TodoHeader from './todo-header.svelte';
-  let { todoTitle, color = 'slate', containerClass = '', x, y, z } = $props();
+
+  interface TodoProps {
+    todoTitle: string;
+    color?: ColorName;
+    containerClass?: string;
+    x: Number;
+    y: Number;
+    z: Number;
+  }
+
+  let { todoTitle, color = 'slate', containerClass = '', x, y, z }: TodoProps = $props();
 </script>
 
 <div

@@ -1,7 +1,8 @@
 <script lang="ts">
+  import type { ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
   const title = ['Today', 'Next', 'Someday'];
-  const color = ['slate', 'teal', 'sky'];
+  const color: ColorName[] = ['slate', 'teal', 'sky'];
   const bg = ['bg-white', 'bg-teal-50', 'bg-sky-50'];
 
   let positions = [0, 1, 2];
@@ -12,6 +13,7 @@
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
+  <!-- @TODO: Fix mobile absolute positioning -->
   <section
     class="relative flex min-h-dvh w-full items-center justify-center overflow-x-scroll bg-slate-50 p-8"
   >
@@ -28,9 +30,9 @@
 
     <button
       on:click={cycleCards}
-      class="absolute bottom-8 rounded bg-slate-200 px-4 py-2 hover:bg-slate-300"
+      class="border-crips absolute bottom-4 left-4 rounded border bg-white px-3 py-3 hover:bg-slate-50"
     >
-      Cycle Cards
+      Cycle
     </button>
   </section>
 </main>
