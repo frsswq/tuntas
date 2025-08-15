@@ -4,8 +4,7 @@
   const title = ['Today', 'Next', 'Someday'];
   const color: ColorName[] = ['slate', 'teal', 'sky'];
   const bg = ['bg-white', 'bg-teal-50', 'bg-sky-50'];
-
-  let positions = [0, 1, 2];
+  let positions = $state([0, 1, 2]);
 
   function cycleCards() {
     positions = [...positions.slice(1), positions[0]];
@@ -15,22 +14,22 @@
 <main class="text-sm leading-[1.333] tracking-tight">
   <!-- @TODO: Fix mobile absolute positioning -->
   <section
-    class="flex min-h-dvh w-full min-w-dvw items-center justify-center overflow-x-scroll bg-slate-50 p-8"
+    class="flex min-h-dvh w-full min-w-dvw items-center justify-center overflow-x-scroll bg-slate-50"
   >
     {#each positions as pos, index}
       <TodoMain
         todoTitle={title[2 - index]}
+        containerClass={bg[2 - index]}
         color={color[2 - index]}
         x={(1 - pos) * 20}
         y={(pos - 1) * 20}
         z={pos}
-        containerClass={bg[2 - index]}
       />
     {/each}
 
     <button
-      on:click={cycleCards}
-      class="border-crips absolute bottom-4 left-4 rounded border bg-white px-3 py-3 hover:bg-slate-50"
+      onclick={cycleCards}
+      class="border-crisp absolute bottom-4 left-4 rounded border bg-white px-3 py-3 hover:bg-slate-50"
     >
       Cycle
     </button>
