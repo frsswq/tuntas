@@ -17,7 +17,7 @@
   $effect(() => {
     if (innerWidth.current !== undefined) {
       if (innerWidth.current < 480) {
-        todoWidth = innerWidth.current - MOBILE_TODO_PADDING;
+        todoWidth = Math.min(innerWidth.current - MOBILE_TODO_PADDING, 325);
       } else {
         todoWidth = 325;
       }
