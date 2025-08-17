@@ -20,9 +20,10 @@
   let pointerType;
   let currentIndex = 0;
 
-  const normalizeIndex = (index: number) => {
+  const normalizeIndex = (index: number): number => {
     if (index < 0) return todoCards.length - 1;
     if (index >= todoCards.length) return 0;
+    return index;
   };
 
   const getTransform = (cardIndex: number) => {
@@ -30,9 +31,9 @@
     const prev = normalizeIndex(currentIndex - 1);
     const next = normalizeIndex(currentIndex + 1);
 
-    if (cardIndex === prev) return -100;
-    if (cardIndex === next) return 100;
-    return -200;
+    if (cardIndex === prev) return -1;
+    if (cardIndex === next) return 1;
+    return -2;
   };
 
   // @TODO: swipe left to prev, swipe right to next, sync the translate-x
@@ -44,16 +45,22 @@
     pointerType = event.detail.pointerType;
 
     if (direction === 'right') {
-    } else if (direction === 'left') {
+      currentIndex = normalizeIndex(currentIndex - 1);
+    }
+
+    if (direction === 'left') {
+      currentIndex = normalizeIndex(currentIndex + 1);
     }
   };
 </script>
 
-<svelte:window use:swipe={() => ({ timeframe: 300, minSwipeDistance: 60 })} onswipe={handler} />
-
 <main class="text-sm leading-[1.333] tracking-tight">
   <!-- @TODO: Swipe to change current note -->
-  <section class="absolute min-h-dvh w-full max-w-full overflow-hidden bg-slate-50">
+  <section
+    class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50"
+    use:swipe={() => ({ timeframe: 300, minSwipeDistance: 80, touchAction: 'pan-y' })}
+    onswipe={handler}
+  >
     {#each todoCards as { todoTitle, color, bg }, index}
       <TodoMain {todoTitle} containerClass={`${bg}`} {color} x={getTransform(index)} />
     {/each}

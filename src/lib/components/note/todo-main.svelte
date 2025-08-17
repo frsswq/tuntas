@@ -32,15 +32,16 @@
   }
 
   let { todoTitle, color = 'slate', containerClass = '', x }: TodoProps = $props();
+  let offsetX = $derived(innerWidth.current !== undefined ? innerWidth.current * x : 0);
 </script>
 
 {#if isMounted}
   <div
     class={cn(
-      'border-crisp absolute top-1/2 left-1/2 flex h-fit -translate-y-1/2 flex-col gap-y-1.5 rounded-md bg-white transition-transform sm:w-[325px]',
+      'border-crisp absolute top-1/2 left-1/2 flex h-fit flex-col gap-y-1.5 rounded-md bg-white transition-transform duration-300 ease-out sm:w-[325px]',
       containerClass
     )}
-    style={`width: ${todoWidth}px; transform: translateX(calc(-50% + ${x}%)`}
+    style={`width: ${todoWidth}px; transform: translate(-50%, -50%) translateX(${offsetX}px);`}
   >
     <TodoHeader {todoTitle} {color} />
     <TodoBody {color} />
