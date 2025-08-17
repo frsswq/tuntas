@@ -28,18 +28,19 @@
     todoTitle: string;
     color?: ColorName;
     containerClass?: string;
+    x: number;
   }
 
-  let { todoTitle, color = 'slate', containerClass = '' }: TodoProps = $props();
+  let { todoTitle, color = 'slate', containerClass = '', x }: TodoProps = $props();
 </script>
 
 {#if isMounted}
   <div
     class={cn(
-      'border-crisp absolute top-1/2 left-1/2 flex h-fit -translate-x-1/2 -translate-y-1/2 flex-col gap-y-1.5 rounded-md bg-white transition-transform sm:w-[325px]',
+      'border-crisp absolute top-1/2 left-1/2 flex h-fit -translate-y-1/2 flex-col gap-y-1.5 rounded-md bg-white transition-transform sm:w-[325px]',
       containerClass
     )}
-    style={`width: ${todoWidth}px`}
+    style={`width: ${todoWidth}px; transform: translateX(calc(-50% + ${x}%)`}
   >
     <TodoHeader {todoTitle} {color} />
     <TodoBody {color} />

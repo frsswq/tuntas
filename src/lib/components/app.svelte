@@ -1,11 +1,39 @@
 <script lang="ts">
   import { swipe, type SwipeCustomEvent } from 'svelte-gestures';
-  import type { ColorName } from '../types';
+  import { type ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
+
+  interface TodoCards {
+    todoTitle: string;
+    color: ColorName;
+    bg: string;
+  }
+
+  const todoCards: TodoCards[] = [
+    { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
+    { todoTitle: 'Next', color: 'teal', bg: 'bg-teal-50' },
+    { todoTitle: 'Someday', color: 'sky', bg: 'bg-sky-50' }
+  ];
 
   let direction;
   let target;
   let pointerType;
+  let currentIndex = 0;
+
+  const normalizeIndex = (index: number) => {
+    if (index < 0) return todoCards.length - 1;
+    if (index >= todoCards.length) return 0;
+  };
+
+  const getTransform = (cardIndex: number) => {
+    if (cardIndex === currentIndex) return 0;
+    const prev = normalizeIndex(currentIndex - 1);
+    const next = normalizeIndex(currentIndex + 1);
+
+    if (cardIndex === prev) return -100;
+    if (cardIndex === next) return 100;
+    return -200;
+  };
 
   // @TODO: swipe left to prev, swipe right to next, sync the translate-x
   //        to the current todo and prev / next todo
@@ -19,26 +47,15 @@
     } else if (direction === 'left') {
     }
   };
-
-  const title = ['Today', 'Next', 'Someday'];
-  const color: ColorName[] = ['slate', 'teal', 'sky'];
-  const bg = ['bg-white', 'bg-teal-50', 'bg-sky-50'];
-  let positions = $state([0, 1, 2]);
 </script>
+
+<svelte:window use:swipe={() => ({ timeframe: 300, minSwipeDistance: 60 })} onswipe={handler} />
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <!-- @TODO: Swipe to change current note -->
-  <section
-    class="flex min-h-dvh w-full max-w-full min-w-full items-center justify-center overflow-hidden bg-slate-50"
-    use:swipe={() => ({ timeframe: 300, minSwipeDistance: 60 })}
-    onswipe={handler}
-  >
-    {#each positions as pos, index}
-      <TodoMain
-        todoTitle={title[2 - index]}
-        containerClass={bg[2 - index]}
-        color={color[2 - index]}
-      />
+  <section class="absolute min-h-dvh w-full max-w-full overflow-hidden bg-slate-50">
+    {#each todoCards as { todoTitle, color, bg }, index}
+      <TodoMain {todoTitle} containerClass={`${bg}`} {color} x={getTransform(index)} />
     {/each}
   </section>
 </main>
