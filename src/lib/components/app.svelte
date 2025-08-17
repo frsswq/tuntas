@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { swipe, type SwipeCustomEvent } from 'svelte-gestures';
   import { type ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
 
@@ -15,9 +14,6 @@
     { todoTitle: 'Someday', color: 'sky', bg: 'bg-sky-50' }
   ];
 
-  let direction;
-  let target;
-  let pointerType;
   let currentIndex = 0;
 
   const normalizeIndex = (index: number): number => {
@@ -38,29 +34,26 @@
 
   // @TODO: swipe left to prev, swipe right to next, sync the translate-x
   //        to the current todo and prev / next todo
+  //        fuck the gesture
 
-  const handler = (event: SwipeCustomEvent) => {
-    direction = event.detail.direction;
-    target = event.detail.target;
-    pointerType = event.detail.pointerType;
+  // const handler = (event: SwipeCustomEvent) => {
+  //   direction = event.detail.direction;
+  //   target = event.detail.target;
+  //   pointerType = event.detail.pointerType;
 
-    if (direction === 'right') {
-      currentIndex = normalizeIndex(currentIndex - 1);
-    }
+  //   if (direction === 'right') {
+  //     currentIndex = normalizeIndex(currentIndex - 1);
+  //   }
 
-    if (direction === 'left') {
-      currentIndex = normalizeIndex(currentIndex + 1);
-    }
-  };
+  //   if (direction === 'left') {
+  //     currentIndex = normalizeIndex(currentIndex + 1);
+  //   }
+  // };
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <!-- @TODO: Swipe to change current note -->
-  <section
-    class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50"
-    use:swipe={() => ({ timeframe: 300, minSwipeDistance: 80, touchAction: 'pan-y' })}
-    onswipe={handler}
-  >
+  <section class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50">
     {#each todoCards as { todoTitle, color, bg }, index}
       <TodoMain {todoTitle} containerClass={`${bg}`} {color} x={getTransform(index)} />
     {/each}
