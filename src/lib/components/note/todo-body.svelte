@@ -6,7 +6,7 @@
 
   let { color = 'slate' }: { color?: ColorName } = $props();
 
-  const MAX_LINES = 3;
+  const MAX_LINES = 2;
 
   const getVisualLineCount = (el: HTMLTextAreaElement): number => {
     const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
@@ -32,7 +32,7 @@
   };
 </script>
 
-<div class="flex flex-col gap-y-1.5 pb-3">
+<div class="flex flex-col pb-3">
   {#each { length: 10 } as _}
     <div class="flex w-full max-w-full items-start gap-x-2 px-2.5">
       <Checkbox
