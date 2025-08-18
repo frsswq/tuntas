@@ -17,6 +17,7 @@
 
   let currentIndex = $state(0);
   let isDragging = $state(false);
+  let isTransitioning = $state(false);
   let startX = $state(0);
   let currentTranslateX = $state(0);
   let containerEl: HTMLElement | null;
@@ -47,11 +48,25 @@
     });
   };
 
+  const handleTransitionEnd = () => {
+    if (!isTransitioning) return;
+
+    todoCards.forEach((_, index) => {
+      const card = containerEl?.children[index] as HTMLElement;
+      if (card && index !== currentIndex) {
+        card.style.display = 'none';
+      }
+    });
+
+    isTransitioning = false;
+  };
+
   const handleTouchStart = (e: TouchEvent) => {
     if (e.touches.length > 1) return;
 
     startX = e.touches[0].clientX;
     isDragging = true;
+    isTransitioning = true;
     currentTranslateX = 0;
 
     const prev = normalizeIndex(currentIndex - 1);
@@ -100,9 +115,7 @@
       const card = containerEl?.children[index] as HTMLElement;
       if (card) {
         card.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        if (index !== currentIndex) {
-          card.style.display = 'none';
-        }
+        card.ontransitionend = handleTransitionEnd;
       }
     });
 
