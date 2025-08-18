@@ -36,12 +36,29 @@
     return cardIndex < currentIndex ? -200 + offset : 200 + offset;
   };
 
+  const updateCardPositions = (dragOffset = 0) => {
+    todoCards.forEach((_, index) => {
+      const card = containerEl?.children[index] as HTMLElement;
+      if (card) {
+        const transform = getTransform(index, dragOffset);
+        card.style.transform = `translateX(${transform}%)`;
+      }
+    });
+  };
+
   const handleTouchStart = (e: TouchEvent) => {
     if (e.touches.length > 1) return;
 
     startX = e.touches[0].clientX;
     isDragging = true;
     currentTranslateX = 0;
+
+    todoCards.forEach((_, index) => {
+      const card = containerEl?.children[index] as HTMLElement;
+      if (card) {
+        card.style.transition = 'none';
+      }
+    });
   };
 
   const handleTouchMove = (e: TouchEvent) => {
@@ -52,6 +69,8 @@
     const deltaX = currentX - startX;
     currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
+
+    updateCardPositions(currentIndex);
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
@@ -69,6 +88,15 @@
 
     currentTranslateX = 0;
     isDragging = false;
+
+    todoCards.forEach((_, index) => {
+      const card = containerEl?.children[index] as HTMLElement;
+      if (card) {
+        card.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      }
+    });
+
+    updateCardPositions(0);
   };
 </script>
 
@@ -82,10 +110,7 @@
     class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50"
   >
     {#each todoCards as { todoTitle, color, bg }, index}
-      <div
-        class="absolute inset-0 transition-transform duration-300 ease-out will-change-transform"
-        style={`transform: translateX(${getTransform(index, currentTranslateX)}%)`}
-      >
+      <div class="absolute inset-0 will-change-transform">
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
