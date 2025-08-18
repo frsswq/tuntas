@@ -40,9 +40,23 @@
   const updateCardPositions = (dragOffset = 0) => {
     todoCards.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
-      if (card) {
-        const transform = getTransform(index, dragOffset);
-        card.style.transform = `translateX(${transform}%)`;
+      if (!card) return;
+
+      const prev = normalizeIndex(currentIndex - 1);
+      const next = normalizeIndex(currentIndex + 1);
+
+      if (index === currentIndex) {
+        card.style.display = 'flex';
+        card.style.transform = `translateX(${dragOffset}%)`;
+      } else if (index === prev) {
+        card.style.display = 'flex';
+        card.style.transform = `translateX(${-100 + dragOffset}%)`;
+      } else if (index === next) {
+        card.style.display = 'flex';
+        card.style.transform = `translateX(${100 + dragOffset}%)`;
+      } else {
+        card.style.display = 'none';
+        card.style.transform = 'translateX(0)';
       }
     });
   };
@@ -77,7 +91,7 @@
   const handleTouchEnd = () => {
     if (!isDragging) return;
 
-    const threshold = 30;
+    const threshold = 10;
 
     if (Math.abs(currentTranslateX) > threshold) {
       if (currentTranslateX > 0) {
@@ -123,7 +137,7 @@
     <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
       {#each todoCards as _, index}
         <span
-          class={`${index === currentIndex ? 'bg-slate-500' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
+          class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
         ></span>
       {/each}
     </div>
