@@ -29,9 +29,9 @@
   };
 
   const getTransform = (cardIndex: number, offset: number = 0) => {
-    if (cardIndex === currentIndex) return offset;
     const prev = normalizeIndex(currentIndex - 1);
     const next = normalizeIndex(currentIndex + 1);
+    if (cardIndex === currentIndex) return offset;
 
     if (cardIndex === prev) return -100 + offset;
     if (cardIndex === next) return 100 + offset;
@@ -41,9 +41,23 @@
   const updateCardPositions = (dragOffset = 0) => {
     todoCards.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
+
       if (card) {
         const transform = getTransform(index, dragOffset);
         card.style.transform = `translateX(${transform}%)`;
+
+        const prev = normalizeIndex(currentIndex - 1);
+        const next = normalizeIndex(currentIndex + 1);
+
+        if (dragOffset !== 0) {
+          if (dragOffset > 0 && index !== prev) {
+            card.style.display = 'none';
+          } else if (dragOffset < 0 && index !== next) {
+            card.style.display = 'none';
+          } else {
+            card.style.display = 'block';
+          }
+        }
       }
     });
   };
@@ -69,16 +83,11 @@
     isTransitioning = true;
     currentTranslateX = 0;
 
-    const prev = normalizeIndex(currentIndex - 1);
-    const next = normalizeIndex(currentIndex + 1);
-
     todoCards.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
       if (card) {
-        if (index === currentIndex || index === prev || index === next) {
-          card.style.display = 'block';
-        }
         card.style.transition = 'none';
+        card.style.display = index === currentIndex ? 'block' : 'none';
       }
     });
   };
@@ -91,6 +100,14 @@
     const deltaX = currentX - startX;
     currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
+
+    if (currentTranslateX > 0) {
+      const prevCard = containerEl?.children[normalizeIndex(currentIndex - 1)] as HTMLElement;
+      if (prevCard) prevCard.style.display = 'block';
+    } else if (currentTranslateX < 0) {
+      const nextCard = containerEl?.children[normalizeIndex(currentIndex + 1)] as HTMLElement;
+      if (nextCard) nextCard.style.display = 'block';
+    }
 
     updateCardPositions(currentTranslateX);
   };
@@ -148,15 +165,14 @@
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
-
-    <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
-      {#each todoCards as _, index}
-        <span
-          class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
-        ></span>
-      {/each}
-    </div>
   </section>
+  <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
+    {#each todoCards as _, index}
+      <span
+        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
+      ></span>
+    {/each}
+  </div>
 </main>
 
 <style>
