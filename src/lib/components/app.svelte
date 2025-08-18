@@ -14,49 +14,89 @@
     { todoTitle: 'Someday', color: 'sky', bg: 'bg-sky-50' }
   ];
 
-  let currentIndex = 0;
+  let currentIndex = $state(0);
+  let isDragging = $state(false);
+  let startX = $state(0);
+  let currentTranslateX = $state(0);
+  let containerEl: HTMLElement | null;
 
-  const normalizeIndex = (index: number): number => {
+  const normalizeIndex = (index: number) => {
     if (index < 0) return todoCards.length - 1;
     if (index >= todoCards.length) return 0;
     return index;
   };
 
-  const getTransform = (cardIndex: number) => {
-    if (cardIndex === currentIndex) return 0;
+  const getTransform = (cardIndex: number, offset: number = 0) => {
+    if (cardIndex === currentIndex) return offset;
     const prev = normalizeIndex(currentIndex - 1);
     const next = normalizeIndex(currentIndex + 1);
 
-    if (cardIndex === prev) return -1;
-    if (cardIndex === next) return 1;
-    return -2;
+    if (cardIndex === prev) return -100 + offset;
+    if (cardIndex === next) return 100 + offset;
+    return cardIndex < currentIndex ? -200 + offset : 200 + offset;
   };
 
-  // @TODO: swipe left to prev, swipe right to next, sync the translate-x
-  //        to the current todo and prev / next todo
-  //        fuck the gesture
+  const handleTouchStart = (e: TouchEvent) => {
+    if (e.touches.length > 1) return;
 
-  // const handler = (event: SwipeCustomEvent) => {
-  //   direction = event.detail.direction;
-  //   target = event.detail.target;
-  //   pointerType = event.detail.pointerType;
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    currentTranslateX = 0;
+  };
 
-  //   if (direction === 'right') {
-  //     currentIndex = normalizeIndex(currentIndex - 1);
-  //   }
+  const handleTouchMove = (e: TouchEvent) => {
+    if (!isDragging || e.touches.length > 1) return;
 
-  //   if (direction === 'left') {
-  //     currentIndex = normalizeIndex(currentIndex + 1);
-  //   }
-  // };
+    e.preventDefault();
+    const currentX = e.touches[0].clientX;
+    const deltaX = currentX - startX;
+    currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
+    currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (!isDragging) return;
+
+    const threshold = 30;
+
+    if (Math.abs(currentTranslateX) > threshold) {
+      if (currentTranslateX > 0) {
+        currentIndex = normalizeIndex(currentIndex - 1);
+      } else {
+        currentIndex = normalizeIndex(currentIndex + 1);
+      }
+    }
+
+    currentTranslateX = 0;
+    isDragging = false;
+  };
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
-  <!-- @TODO: Swipe to change current note -->
-  <section class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50">
+  <section
+    bind:this={containerEl}
+    ontouchstart={handleTouchStart}
+    ontouchmove={handleTouchMove}
+    ontouchend={handleTouchEnd}
+    role="presentation"
+    class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50"
+  >
     {#each todoCards as { todoTitle, color, bg }, index}
-      <TodoMain {todoTitle} containerClass={`${bg}`} {color} x={getTransform(index)} />
+      <div
+        class="absolute inset-0 transition-transform duration-300 ease-out will-change-transform"
+        style={`transform: translateX(${getTransform(index, currentTranslateX)}%)`}
+      >
+        <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
+      </div>
     {/each}
+
+    <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
+      {#each todoCards as _, index}
+        <span
+          class={`${index === currentIndex ? 'bg-slate-500' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
+        ></span>
+      {/each}
+    </div>
   </section>
 </main>
 

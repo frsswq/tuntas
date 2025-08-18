@@ -37,7 +37,7 @@
     <div class="flex w-full max-w-full items-start gap-x-2 px-2.5">
       <Checkbox
         class={cn(
-          `peer mt-1 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
+          `peer mt-0.5 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
           `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white`
         )}
       />
