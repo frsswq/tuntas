@@ -45,19 +45,6 @@
       if (card) {
         const transform = getTransform(index, dragOffset);
         card.style.transform = `translateX(${transform}%)`;
-
-        const prev = normalizeIndex(currentIndex - 1);
-        const next = normalizeIndex(currentIndex + 1);
-
-        if (dragOffset !== 0) {
-          if (dragOffset > 0 && index !== prev) {
-            card.style.display = 'none';
-          } else if (dragOffset < 0 && index !== next) {
-            card.style.display = 'none';
-          } else {
-            card.style.display = 'block';
-          }
-        }
       }
     });
   };
@@ -161,7 +148,7 @@
     class="relative min-h-dvh max-w-full min-w-full touch-pan-y overflow-hidden bg-slate-50"
   >
     {#each todoCards as { todoTitle, color, bg }, index}
-      <div class={`absolute inset-0 will-change-transform`}>
+      <div class={`${index === currentIndex && 'block'} absolute inset-0 will-change-transform`}>
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
