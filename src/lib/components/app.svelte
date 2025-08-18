@@ -54,9 +54,15 @@
     isDragging = true;
     currentTranslateX = 0;
 
+    const prev = normalizeIndex(currentIndex - 1);
+    const next = normalizeIndex(currentIndex + 1);
+
     todoCards.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
       if (card) {
+        if (index === currentIndex || index === prev || index === next) {
+          card.style.display = 'block';
+        }
         card.style.transition = 'none';
       }
     });
@@ -94,6 +100,9 @@
       const card = containerEl?.children[index] as HTMLElement;
       if (card) {
         card.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        if (index !== currentIndex) {
+          card.style.display = 'none';
+        }
       }
     });
 
@@ -102,6 +111,13 @@
 
   onMount(() => {
     updateCardPositions(0);
+
+    todoCards.forEach((_, index) => {
+      const card = containerEl?.children[index] as HTMLElement;
+      if (card && index !== currentIndex) {
+        card.style.display = 'none';
+      }
+    });
   });
 </script>
 
@@ -115,9 +131,7 @@
     class="relative min-h-dvh max-w-full min-w-full touch-pan-y overflow-hidden bg-slate-50"
   >
     {#each todoCards as { todoTitle, color, bg }, index}
-      <div
-        class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 will-change-transform`}
-      >
+      <div class={`absolute inset-0 will-change-transform`}>
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
