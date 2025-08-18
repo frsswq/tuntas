@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { sineOut } from 'svelte/easing';
   import { type ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
 
@@ -120,7 +119,7 @@
     CARDS.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
       if (card) {
-        card.style.transition = `transform ${TRANSITION_DURATION}ms ${sineOut}`;
+        card.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
         card.ontransitionend = handleTransitionEnd;
       }
     });
