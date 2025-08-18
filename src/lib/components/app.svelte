@@ -40,23 +40,9 @@
   const updateCardPositions = (dragOffset = 0) => {
     todoCards.forEach((_, index) => {
       const card = containerEl?.children[index] as HTMLElement;
-      if (!card) return;
-
-      const prev = normalizeIndex(currentIndex - 1);
-      const next = normalizeIndex(currentIndex + 1);
-
-      if (index === currentIndex) {
-        card.style.display = 'flex';
-        card.style.transform = `translateX(${dragOffset}%)`;
-      } else if (index === prev) {
-        card.style.display = 'flex';
-        card.style.transform = `translateX(${-100 + dragOffset}%)`;
-      } else if (index === next) {
-        card.style.display = 'flex';
-        card.style.transform = `translateX(${100 + dragOffset}%)`;
-      } else {
-        card.style.display = 'none';
-        card.style.transform = 'translateX(0)';
+      if (card) {
+        const transform = getTransform(index, dragOffset);
+        card.style.transform = `translateX(${transform}%)`;
       }
     });
   };
@@ -129,7 +115,9 @@
     class="relative min-h-dvh max-w-full min-w-full touch-pan-y overflow-hidden bg-slate-50"
   >
     {#each todoCards as { todoTitle, color, bg }, index}
-      <div class="absolute inset-0 will-change-transform">
+      <div
+        class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 will-change-transform`}
+      >
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
