@@ -1,7 +1,6 @@
 <script lang="ts">
   import favicon from '$lib/assets/favicon.svg';
   import '@fontsource-variable/inter';
-  import '@fontsource/iansui';
   import '../app.css';
 
   let { children } = $props();
