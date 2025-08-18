@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { type ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
 
@@ -70,10 +71,10 @@
     currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
 
-    updateCardPositions(currentIndex);
+    updateCardPositions(currentTranslateX);
   };
 
-  const handleTouchEnd = (e: TouchEvent) => {
+  const handleTouchEnd = () => {
     if (!isDragging) return;
 
     const threshold = 30;
@@ -98,6 +99,10 @@
 
     updateCardPositions(0);
   };
+
+  onMount(() => {
+    updateCardPositions(0);
+  });
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
@@ -107,7 +112,7 @@
     ontouchmove={handleTouchMove}
     ontouchend={handleTouchEnd}
     role="presentation"
-    class="relative min-h-dvh max-w-full min-w-full overflow-hidden bg-slate-50"
+    class="relative min-h-dvh max-w-full min-w-full touch-pan-y overflow-hidden bg-slate-50"
   >
     {#each todoCards as { todoTitle, color, bg }, index}
       <div class="absolute inset-0 will-change-transform">
