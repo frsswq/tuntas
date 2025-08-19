@@ -2,7 +2,12 @@
   import { colorClasses, type ColorName } from '../../types';
   import Input from '../ui/input/input.svelte';
 
-  let { todoTitle, color = 'slate' }: { todoTitle: string; color?: ColorName } = $props();
+  interface TodoHeaderProps {
+    todoTitle: string;
+    color?: ColorName;
+  }
+
+  let { todoTitle, color = 'slate' }: TodoHeaderProps = $props();
 </script>
 
 <div
@@ -11,8 +16,10 @@
   <h1 class={`text-[15px] leading-none font-medium ${colorClasses[color].text}`}>
     {todoTitle}
   </h1>
+  <label for={`${todoTitle}-detail`} class="sr=only">{todoTitle} Detail</label>
   <!-- @TODO: make it limit one line instead of maxlength -->
   <Input
+    id={`${todoTitle}-detail`}
     class={`h-4 max-w-[75px] rounded-none border border-transparent ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none focus-visible:border-transparent focus-visible:${colorClasses[color].border_b} focus-visible:ring-0`}
     maxlength={10}
   />

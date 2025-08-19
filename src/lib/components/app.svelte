@@ -162,6 +162,8 @@
   };
 </script>
 
+<!-- <svelte:document onkeydown={handleDragStart}/> -->
+
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
     id="carousel"
@@ -187,13 +189,9 @@
   <div aria-live="polite" aria-atomic="true" class="sr-only">
     {CARDS[currentIndex].todoTitle} Card
   </div>
-  <div
-    aria-label="Card Index"
-    class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2"
-  >
+  <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
     {#each CARDS as _, index}
       <span
-        aria-label={`Card Number ${index + 1}`}
         class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp size-2 rounded-full transition-colors duration-200`}
       ></span>
     {/each}
