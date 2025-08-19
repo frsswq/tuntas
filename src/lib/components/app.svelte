@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { type ColorName } from '../types';
   import TodoMain from './note/todo-main.svelte';
+
+  type Direction = 'none' | 'left' | 'right';
 
   interface TodoCard {
     todoTitle: string;
@@ -49,26 +52,26 @@
     );
   };
 
-  const updateCardPositions = (dragOffset = 0) => {
+  const updateCardPositions = (dragOffset = 0, direction: Direction = 'none') => {
     if (!carouselEl) return;
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
 
-      if (card) {
-        const transform = getTransform(index, dragOffset);
-        card.style.transform = `translateX(${transform}%)`;
+      if (!card) return;
+      const prev = normalizeIndex(currentIndex - 1);
+      const next = normalizeIndex(currentIndex + 1);
 
-        const prev = normalizeIndex(currentIndex - 1);
-        const next = normalizeIndex(currentIndex + 1);
+      const transform = getTransform(index, dragOffset);
+      card.style.transform = `translateX(${transform}%)`;
 
-        if (dragOffset > 0) {
-          card.style.display = index === currentIndex || index === prev ? 'block' : 'none';
-        } else if (dragOffset < 0) {
-          card.style.display = index === currentIndex || index === next ? 'block' : 'none';
-        } else {
-          card.style.display = index === currentIndex ? 'block' : 'none';
-        }
+      if (dragOffset > 0 || direction === 'right') {
+        card.style.display = index === currentIndex || index === prev ? 'block' : 'none';
+      } else if (dragOffset < 0 || direction === 'left') {
+        card.style.display = index === currentIndex || index === next ? 'block' : 'none';
+      } else {
+        // redundant but whatever
+        card.style.display = index === currentIndex ? 'block' : 'none';
       }
     });
   };
@@ -79,9 +82,8 @@
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
-      if (card && index !== currentIndex) {
-        card.style.display = 'none';
-      }
+      if (!card || index === currentIndex) return;
+      card.style.display = 'none';
     });
 
     isTransitioning = false;
@@ -108,9 +110,8 @@
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
-      if (card) {
-        card.style.transition = 'none';
-      }
+      if (!card) return;
+      card.style.transition = 'none';
     });
 
     if (!('touches' in e)) {
@@ -149,10 +150,9 @@
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
-      if (card) {
-        card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
-        card.ontransitionend = handleTransitionEnd;
-      }
+      if (!card) return;
+      card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
+      card.addEventListener('transitionend', handleTransitionEnd, { once: true });
     });
 
     updateCardPositions(0);
@@ -160,9 +160,51 @@
     document.removeEventListener('mousemove', handleDragMove);
     document.removeEventListener('mouseup', handleDragEnd);
   };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+
+    const direction: Direction = e.key === 'ArrowLeft' ? 'left' : 'right';
+    const nextIndex =
+      direction === 'left' ? normalizeIndex(currentIndex - 1) : normalizeIndex(currentIndex + 1);
+
+    if (!carouselEl) return;
+
+    isTransitioning = true;
+
+    CARDS.forEach((_, index) => {
+      const card = carouselEl?.children[index] as HTMLElement;
+      if (!card) return;
+
+      card.style.transition = 'none';
+      const startTransform = getTransform(index, 0);
+      card.style.transform = `translateX(${startTransform}%)`;
+      card.style.display = index === currentIndex || index === nextIndex ? 'block' : 'none';
+    });
+
+    // why this offsetWidth work idk
+    carouselEl.offsetWidth;
+
+    CARDS.forEach((_, index) => {
+      const card = carouselEl?.children[index] as HTMLElement;
+      if (!card) return;
+      card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
+      card.addEventListener('transitionend', handleTransitionEnd, { once: true });
+    });
+
+    currentIndex = nextIndex;
+    updateCardPositions(0, direction);
+  };
+
+  onMount(() => {
+    if (carouselEl) {
+      updateCardPositions(0);
+    }
+  });
 </script>
 
-<!-- <svelte:document onkeydown={handleDragStart}/> -->
+<svelte:document onkeydown={handleKeyDown} />
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
