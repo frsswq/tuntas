@@ -24,13 +24,13 @@
     }
   });
 
-  interface TodoProps {
+  interface TodoMainProps {
     todoTitle: string;
     color?: ColorName;
     containerClass?: string;
   }
 
-  let { todoTitle, color = 'slate', containerClass = '' }: TodoProps = $props();
+  let { todoTitle, color = 'slate', containerClass = '' }: TodoMainProps = $props();
 </script>
 
 {#if isMounted}
@@ -42,6 +42,6 @@
     style={`width: ${todoWidth}px;`}
   >
     <TodoHeader {todoTitle} {color} />
-    <TodoBody {color} />
+    <TodoBody {todoTitle} {color} />
   </div>
 {/if}

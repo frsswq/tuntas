@@ -22,7 +22,7 @@
   let isTransitioning = $state(false);
   let startX = $state(0);
   let currentTranslateX = $state(0);
-  let containerEl: HTMLElement | null;
+  let carouselEl: HTMLElement | null;
 
   const normalizeIndex = (index: number) => {
     if (index < 0) return CARDS.length - 1;
@@ -47,9 +47,27 @@
     );
   };
 
-  const updateCardPositions = (dragOffset = 0) => {
+  const startTransition = (fromKeyboard: boolean = false) => {
+    if (fromKeyboard) {
+      isTransitioning = true;
+    }
+
     CARDS.forEach((_, index) => {
-      const card = containerEl?.children[index] as HTMLElement;
+      const card = carouselEl?.children[index] as HTMLElement;
+      if (card) {
+        card.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+        card.ontransitionend = handleTransitionEnd;
+      }
+    });
+
+    updateCardPositions(0);
+  };
+
+  const updateCardPositions = (dragOffset = 0) => {
+    if (!carouselEl) return;
+
+    CARDS.forEach((_, index) => {
+      const card = carouselEl?.children[index] as HTMLElement;
 
       if (card) {
         const transform = getTransform(index, dragOffset);
@@ -71,7 +89,7 @@
     if (!isTransitioning) return;
 
     CARDS.forEach((_, index) => {
-      const card = containerEl?.children[index] as HTMLElement;
+      const card = carouselEl?.children[index] as HTMLElement;
       if (card && index !== currentIndex) {
         card.style.display = 'none';
       }
@@ -100,7 +118,7 @@
     currentTranslateX = 0;
 
     CARDS.forEach((_, index) => {
-      const card = containerEl?.children[index] as HTMLElement;
+      const card = carouselEl?.children[index] as HTMLElement;
       if (card) {
         card.style.transition = 'none';
       }
@@ -121,7 +139,7 @@
 
     e.preventDefault();
     const deltaX = clientX - startX;
-    currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
+    currentTranslateX = (deltaX / carouselEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
     updateCardPositions(currentTranslateX);
   };
@@ -140,31 +158,42 @@
     currentTranslateX = 0;
     isDragging = false;
 
-    CARDS.forEach((_, index) => {
-      const card = containerEl?.children[index] as HTMLElement;
-      if (card) {
-        card.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-        card.ontransitionend = handleTransitionEnd;
-      }
-    });
-
-    updateCardPositions(0);
+    startTransition();
 
     document.removeEventListener('mousemove', handleDragMove);
     document.removeEventListener('mouseup', handleDragEnd);
   };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (isDragging || isTransitioning) return;
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      currentIndex = normalizeIndex(currentIndex - 1);
+      startTransition(true);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      currentIndex = normalizeIndex(currentIndex + 1);
+      startTransition(true);
+    }
+  };
 </script>
 
+<svelte:window onkeydown={handleKeyDown} />
+
 <main class="text-sm leading-[1.333] tracking-tight">
-  <section
-    bind:this={containerEl}
+  <div
+    id="carousel"
+    bind:this={carouselEl}
     ontouchstart={handleDragStart}
     ontouchmove={handleDragMove}
     ontouchend={handleDragEnd}
     onmousedown={handleDragStart}
     role="presentation"
-    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-hidden bg-slate-50"
-    class:cursor-grabbing={isDragging}
+    aria-label="Todo cards carousel"
+    aria-roledescription="carousel"
+    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-hidden bg-slate-50 {isDragging &&
+      'cursor-grabbing'}"
   >
     {#each CARDS as { todoTitle, color, bg }, index}
       <div
@@ -173,7 +202,7 @@
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
-  </section>
+  </div>
   <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
     {#each CARDS as _, index}
       <span
@@ -184,7 +213,7 @@
 </main>
 
 <style>
-  section {
+  #carousel {
     background-color: #f8fafc;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%2364748b' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
     background-repeat: repeat;

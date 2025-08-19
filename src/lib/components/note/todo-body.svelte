@@ -4,7 +4,12 @@
   import { colorClasses, type ColorName } from '../../types';
   import Textarea from '../ui/textarea/textarea.svelte';
 
-  let { color = 'slate' }: { color?: ColorName } = $props();
+  interface TodoBodyProps {
+    color?: ColorName;
+    todoTitle: string;
+  }
+
+  let { color = 'slate', todoTitle }: TodoBodyProps = $props();
 
   const MAX_LINES = 2;
 
@@ -33,20 +38,22 @@
 </script>
 
 <div class="flex flex-col pb-3">
-  {#each { length: 10 } as _}
+  {#each { length: 10 } as _, index}
     <div class="flex w-full max-w-full items-start gap-x-2 px-2.5">
       <Checkbox
+        aria-label={`${todoTitle} Checkbox ${index}`}
         class={cn(
           `peer mt-0.5 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
-          `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white`
+          `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white}`
         )}
       />
       <Textarea
+        aria-label={`${todoTitle} Task ${index}`}
         class={cn(
-          `lined-background min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter ${colorClasses[color].text} ${colorClasses[color].caret} shadow-none sm:text-lg`,
-          'transition-all duration-200 ease-out',
+          `min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter ${colorClasses[color].text} ${colorClasses[color].caret} bg-local shadow-none sm:text-lg`,
           'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
         )}
+        style={`background-image: repeating-linear-gradient(transparent, transparent 1.7rem, var(--color-${color}-300) 1.7rem, var(--color-${color}-300) 1.75rem);`}
         oninput={handleTextareaInput}
         spellcheck="false"
         autocomplete="off"
