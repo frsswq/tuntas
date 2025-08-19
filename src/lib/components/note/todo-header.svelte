@@ -18,6 +18,7 @@
   </h1>
   <label for={`${todoTitle}-detail`} class="sr-only">{todoTitle} Detail</label>
   <!-- @TODO: make it limit one line instead of maxlength -->
+  <!-- @TODO: fix input bottom border disappearing on focus -->
   <Input
     id={`${todoTitle}-detail`}
     class={`h-4 max-w-[75px] rounded-none border border-transparent ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none focus-visible:border-transparent focus-visible:border-b-black focus-visible:${colorClasses[color].border_b} focus-visible:ring-0`}

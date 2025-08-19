@@ -165,13 +165,13 @@
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     e.preventDefault();
 
+    if (isTransitioning || isDragging) return;
+
     const direction: Direction = e.key === 'ArrowLeft' ? 'left' : 'right';
     const nextIndex =
       direction === 'left' ? normalizeIndex(currentIndex - 1) : normalizeIndex(currentIndex + 1);
 
     if (!carouselEl) return;
-
-    isTransitioning = true;
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
@@ -183,18 +183,23 @@
       card.style.display = index === currentIndex || index === nextIndex ? 'block' : 'none';
     });
 
-    // why this offsetWidth work idk
-    carouselEl.offsetWidth;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!carouselEl) return;
 
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (!card) return;
-      card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
-      card.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        isTransitioning = true;
+
+        CARDS.forEach((_, index) => {
+          const card = carouselEl!.children[index] as HTMLElement | undefined;
+          if (!card) return;
+          card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
+          card.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        });
+
+        currentIndex = nextIndex;
+        updateCardPositions(0, direction);
+      });
     });
-
-    currentIndex = nextIndex;
-    updateCardPositions(0, direction);
   };
 
   onMount(() => {
