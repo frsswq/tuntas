@@ -16,7 +16,7 @@
   <h1 class={`text-[15px] leading-none font-medium ${colorClasses[color].text}`}>
     {todoTitle}
   </h1>
-  <label for={`${todoTitle}-detail`} class="sr=only">{todoTitle} Detail</label>
+  <label for={`${todoTitle}-detail`} class="sr-only">{todoTitle} Detail</label>
   <!-- @TODO: make it limit one line instead of maxlength -->
   <Input
     id={`${todoTitle}-detail`}
