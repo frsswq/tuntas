@@ -15,6 +15,7 @@
   ];
 
   const TRANSITION_DURATION = 300;
+  const DRAGGING_THRESHOLD = 10;
 
   let currentIndex = $state(0);
   let isDragging = $state(false);
@@ -37,6 +38,13 @@
     if (cardIndex === prev) return -100 + offset;
     if (cardIndex === next) return 100 + offset;
     return cardIndex < currentIndex ? -200 + offset : 200 + offset;
+  };
+
+  const isInteractiveTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return !!target.closest(
+      'a, button, input, textarea, select, [role="button"], [contenteditable], [data-no-drag]'
+    );
   };
 
   const updateCardPositions = (dragOffset = 0) => {
@@ -72,10 +80,21 @@
     isTransitioning = false;
   };
 
-  const handleTouchStart = (e: TouchEvent) => {
-    if (e.touches.length > 1) return;
+  const getClientX = (e: TouchEvent | MouseEvent) => {
+    return 'touches' in e ? e.touches[0]?.clientX : e.clientX;
+  };
 
-    startX = e.touches[0].clientX;
+  const handleDragStart = (e: TouchEvent | MouseEvent) => {
+    if (isInteractiveTarget(e.target)) return;
+
+    if ('touches' in e && e.touches.length > 1) return;
+
+    const clientX = getClientX(e);
+    if (clientX === undefined) return;
+
+    e.preventDefault();
+
+    startX = clientX;
     isDragging = true;
     isTransitioning = true;
     currentTranslateX = 0;
@@ -86,26 +105,31 @@
         card.style.transition = 'none';
       }
     });
+
+    if (!('touches' in e)) {
+      document.addEventListener('mousemove', handleDragMove);
+      document.addEventListener('mouseup', handleDragEnd);
+    }
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging || e.touches.length > 1) return;
+  const handleDragMove = (e: TouchEvent | MouseEvent) => {
+    if (!isDragging) return;
+    if ('touches' in e && e.touches.length > 1) return;
+
+    const clientX = getClientX(e);
+    if (clientX === undefined) return;
 
     e.preventDefault();
-    const currentX = e.touches[0].clientX;
-    const deltaX = currentX - startX;
+    const deltaX = clientX - startX;
     currentTranslateX = (deltaX / containerEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
-
     updateCardPositions(currentTranslateX);
   };
 
-  const handleTouchEnd = () => {
+  const handleDragEnd = () => {
     if (!isDragging) return;
 
-    const threshold = 10;
-
-    if (Math.abs(currentTranslateX) > threshold) {
+    if (Math.abs(currentTranslateX) > DRAGGING_THRESHOLD) {
       if (currentTranslateX > 0) {
         currentIndex = normalizeIndex(currentIndex - 1);
       } else {
@@ -125,21 +149,26 @@
     });
 
     updateCardPositions(0);
+
+    document.removeEventListener('mousemove', handleDragMove);
+    document.removeEventListener('mouseup', handleDragEnd);
   };
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
     bind:this={containerEl}
-    ontouchstart={handleTouchStart}
-    ontouchmove={handleTouchMove}
-    ontouchend={handleTouchEnd}
+    ontouchstart={handleDragStart}
+    ontouchmove={handleDragMove}
+    ontouchend={handleDragEnd}
+    onmousedown={handleDragStart}
     role="presentation"
-    class="relative min-h-dvh max-w-full min-w-full touch-pan-y overflow-hidden bg-slate-50"
+    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-hidden bg-slate-50"
+    class:cursor-grabbing={isDragging}
   >
     {#each CARDS as { todoTitle, color, bg }, index}
       <div
-        class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 will-change-transform`}
+        class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 z-1 will-change-transform`}
       >
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
