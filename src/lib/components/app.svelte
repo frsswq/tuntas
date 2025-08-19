@@ -15,6 +15,7 @@
   ];
 
   const TRANSITION_DURATION = 300;
+  const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
   const DRAGGING_THRESHOLD = 10;
 
   let currentIndex = $state(0);
@@ -33,10 +34,11 @@
   const getTransform = (cardIndex: number, offset: number = 0) => {
     const prev = normalizeIndex(currentIndex - 1);
     const next = normalizeIndex(currentIndex + 1);
-    if (cardIndex === currentIndex) return offset;
 
+    if (cardIndex === currentIndex) return offset;
     if (cardIndex === prev) return -100 + offset;
     if (cardIndex === next) return 100 + offset;
+
     return cardIndex < currentIndex ? -200 + offset : 200 + offset;
   };
 
@@ -45,22 +47,6 @@
     return !!target.closest(
       'a, button, input, textarea, select, [role="button"], [contenteditable], [data-no-drag]'
     );
-  };
-
-  const startTransition = (fromKeyboard: boolean = false) => {
-    if (fromKeyboard) {
-      isTransitioning = true;
-    }
-
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (card) {
-        card.style.transition = `transform ${TRANSITION_DURATION}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-        card.ontransitionend = handleTransitionEnd;
-      }
-    });
-
-    updateCardPositions(0);
   };
 
   const updateCardPositions = (dragOffset = 0) => {
@@ -80,6 +66,8 @@
           card.style.display = index === currentIndex || index === prev ? 'block' : 'none';
         } else if (dragOffset < 0) {
           card.style.display = index === currentIndex || index === next ? 'block' : 'none';
+        } else {
+          card.style.display = index === currentIndex ? 'block' : 'none';
         }
       }
     });
@@ -87,6 +75,7 @@
 
   const handleTransitionEnd = () => {
     if (!isTransitioning) return;
+    if (isDragging) return;
 
     CARDS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
@@ -158,31 +147,23 @@
     currentTranslateX = 0;
     isDragging = false;
 
-    startTransition();
+    CARDS.forEach((_, index) => {
+      const card = carouselEl?.children[index] as HTMLElement;
+      if (card) {
+        card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
+        card.ontransitionend = handleTransitionEnd;
+      }
+    });
+
+    updateCardPositions(0);
 
     document.removeEventListener('mousemove', handleDragMove);
     document.removeEventListener('mouseup', handleDragEnd);
   };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (isDragging || isTransitioning) return;
-
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      currentIndex = normalizeIndex(currentIndex - 1);
-      startTransition(true);
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      currentIndex = normalizeIndex(currentIndex + 1);
-      startTransition(true);
-    }
-  };
 </script>
 
-<svelte:window onkeydown={handleKeyDown} />
-
 <main class="text-sm leading-[1.333] tracking-tight">
-  <div
+  <section
     id="carousel"
     bind:this={carouselEl}
     ontouchstart={handleDragStart}
@@ -202,11 +183,18 @@
         <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
       </div>
     {/each}
+  </section>
+  <div aria-live="polite" aria-atomic="true" class="sr-only">
+    {CARDS[currentIndex].todoTitle} Card
   </div>
-  <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
+  <div
+    aria-label="Card Index"
+    class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2"
+  >
     {#each CARDS as _, index}
       <span
-        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} size-2 rounded-full transition-colors duration-200`}
+        aria-label={`Card Number ${index + 1}`}
+        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp size-2 rounded-full transition-colors duration-200`}
       ></span>
     {/each}
   </div>
