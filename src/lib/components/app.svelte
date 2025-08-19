@@ -69,9 +69,6 @@
         card.style.display = index === currentIndex || index === prev ? 'block' : 'none';
       } else if (dragOffset < 0 || direction === 'left') {
         card.style.display = index === currentIndex || index === next ? 'block' : 'none';
-      } else {
-        // redundant but whatever
-        card.style.display = index === currentIndex ? 'block' : 'none';
       }
     });
   };
