@@ -1,16 +1,19 @@
 <script lang="ts">
   import { cn, type WithoutChildrenOrChild } from '$lib/utils.js';
-  import MinusIcon from '@lucide/svelte/icons/minus';
   import { Checkbox as CheckboxPrimitive } from 'bits-ui';
   import XIcon from '../../icons/mynaui:x.svelte';
+
+  type CheckboxProps = WithoutChildrenOrChild<CheckboxPrimitive.RootProps> & {
+    iconClass?: string;
+  };
 
   let {
     ref = $bindable(null),
     checked = $bindable(false),
-    indeterminate = $bindable(false),
     class: className,
+    iconClass = '',
     ...restProps
-  }: WithoutChildrenOrChild<CheckboxPrimitive.RootProps> = $props();
+  }: CheckboxProps = $props();
 </script>
 
 <CheckboxPrimitive.Root
@@ -21,16 +24,12 @@
     className
   )}
   bind:checked
-  bind:indeterminate
   {...restProps}
 >
-  {#snippet children({ checked, indeterminate })}
+  {#snippet children({ checked })}
     <div data-slot="checkbox-indicator" class="text-current transition-none">
       {#if checked}
-        <XIcon class="size-6 text-slate-600" />
-        <!-- <CheckIcon class="size-3.5" /> -->
-      {:else if indeterminate}
-        <MinusIcon class="size-3.5" />
+        <XIcon class={iconClass} />
       {/if}
     </div>
   {/snippet}

@@ -3,7 +3,6 @@
   import { cn } from '@/lib/utils';
   import { colorClasses, type ColorName } from '../../types';
   import Textarea from '../ui/textarea/textarea.svelte';
-
   interface TodoBodyProps {
     color?: ColorName;
     todoTitle: string;
@@ -46,6 +45,7 @@
           `peer mt-0.5 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
           `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white}`
         )}
+        iconClass={`size-6 ${colorClasses[color].text}`}
       />
       <Textarea
         aria-label={`${todoTitle} Task ${index}`}
