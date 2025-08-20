@@ -14,7 +14,6 @@
   interface TodoItems {
     id: string;
     text: string;
-    completed: boolean;
     isRemoving: boolean;
     isReadding: boolean;
   }
@@ -35,7 +34,6 @@
         todos = Array.from({ length: 10 }, (_, index) => ({
           id: `todo-${Date.now()}-${index}`,
           text: '',
-          completed: false,
           isRemoving: false,
           isReadding: false
         }));
@@ -45,7 +43,7 @@
 
   $effect(() => {
     if (browser && todos.length > 0) {
-      const todosToSave = todos.map(({ id, text, completed }) => ({ id, text, completed }));
+      const todosToSave = todos.map(({ id, text }) => ({ id, text }));
       localStorage.setItem(`todos-${todoTitle}`, JSON.stringify(todosToSave));
     }
   });
@@ -83,7 +81,6 @@
     if (!checked) return;
     const todoIndex = todos.findIndex((t) => t.id === todoId);
     if (todoIndex === -1) return;
-    todos[todoIndex].completed = true;
     todos[todoIndex].isRemoving = true;
 
     await new Promise((r) => setTimeout(r, 300));
@@ -91,7 +88,6 @@
     const emptyTodo = {
       id: `todo-${Date.now()}`,
       text: '',
-      completed: false,
       isRemoving: false,
       isReadding: true
     };
@@ -121,8 +117,7 @@
         )}
         iconClass={`size-4 ${colorClasses[color].text}`}
         onCheckedChange={(checked) => handleCheckboxChange(todo.id, checked)}
-        checked={todo.completed}
-        disabled={todo.isRemoving}
+        disabled={todo.isRemoving || todo.isReadding}
       />
       <Textarea
         aria-label={`${todoTitle} Task ${todo.id}`}
@@ -136,7 +131,7 @@
         autocomplete="off"
         rows={1}
         value={todo.text}
-        disabled={todo.isRemoving}
+        disabled={todo.isRemoving || todo.isReadding}
       />
     </div>
   {/each}
