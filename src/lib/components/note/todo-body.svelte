@@ -1,52 +1,17 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
   import { cn } from '@/lib/utils';
-  import { onMount } from 'svelte';
-  import { colorClasses, type ColorName } from '../../types';
+
+  import { colorClasses, type ColorName, type TodoItems } from '../../types';
   import Textarea from '../ui/textarea/textarea.svelte';
 
   interface TodoBodyProps {
     color?: ColorName;
     todoTitle: string;
+    todoItems: TodoItems[];
   }
 
-  interface TodoItems {
-    id: string;
-    text: string;
-    isRemoving: boolean;
-    isReadding: boolean;
-  }
-
-  let { color = 'slate', todoTitle }: TodoBodyProps = $props();
-  let todos = $state<TodoItems[]>([]);
-
-  onMount(() => {
-    if (browser) {
-      const stored = localStorage.getItem(`todos-${todoTitle}`);
-      if (stored) {
-        todos = JSON.parse(stored).map((todo: TodoItems) => ({
-          ...todo,
-          isRemoving: false,
-          isReadding: false
-        }));
-      } else {
-        todos = Array.from({ length: 10 }, (_, index) => ({
-          id: `todo-${Date.now()}-${index}`,
-          text: '',
-          isRemoving: false,
-          isReadding: false
-        }));
-      }
-    }
-  });
-
-  $effect(() => {
-    if (browser && todos.length > 0) {
-      const todosToSave = todos.map(({ id, text }) => ({ id, text }));
-      localStorage.setItem(`todos-${todoTitle}`, JSON.stringify(todosToSave));
-    }
-  });
+  let { color = 'slate', todoTitle, todoItems = $bindable() }: TodoBodyProps = $props();
 
   const MAX_LINES = 2;
 
@@ -72,16 +37,16 @@
     const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
     el.style.height = Math.min(el.scrollHeight, lineHeight * MAX_LINES) + 'px';
 
-    const todoIndex = todos.findIndex((t) => t.id === todoId);
+    const todoIndex = todoItems.findIndex((t) => t.id === todoId);
     if (todoIndex === -1) return;
-    todos[todoIndex].text = el.value;
+    todoItems[todoIndex].text = el.value;
   };
 
   const handleCheckboxChange = async (todoId: string, checked: boolean) => {
     if (!checked) return;
-    const todoIndex = todos.findIndex((t) => t.id === todoId);
+    const todoIndex = todoItems.findIndex((t) => t.id === todoId);
     if (todoIndex === -1) return;
-    todos[todoIndex].isRemoving = true;
+    todoItems[todoIndex].isRemoving = true;
 
     await new Promise((r) => setTimeout(r, 300));
 
@@ -92,15 +57,15 @@
       isReadding: true
     };
 
-    todos[todoIndex] = emptyTodo;
+    todoItems[todoIndex] = emptyTodo;
 
     await new Promise((r) => setTimeout(r, 50));
-    todos[todoIndex].isReadding = false;
+    todoItems[todoIndex].isReadding = false;
   };
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
-  {#each todos as todo (todo.id)}
+  {#each todoItems as todo (todo.id)}
     <div
       class={cn(
         `transition-[transform, opacity] inset-0 flex w-full max-w-full items-start gap-x-2 overflow-hidden bg-transparent bg-clip-border px-2.5 duration-300 ease-out`,
@@ -130,7 +95,7 @@
         spellcheck="false"
         autocomplete="off"
         rows={1}
-        value={todo.text}
+        bind:value={todo.text}
         disabled={todo.isRemoving || todo.isReadding}
       />
     </div>

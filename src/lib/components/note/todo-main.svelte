@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { ColorName } from '@/lib/types';
+  import { browser } from '$app/environment';
+  import { type ColorName, type TodoItems, type TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { onMount } from 'svelte';
   import { innerWidth } from 'svelte/reactivity/window';
@@ -10,8 +11,73 @@
   let isMounted = $state(false);
   const MOBILE_TODO_PADDING = 80;
 
+  interface TodoMainProps {
+    todoTitle: string;
+    color?: ColorName;
+    containerClass?: string;
+  }
+
+  let { todoTitle, color = 'slate', containerClass = '' }: TodoMainProps = $props();
+
+  let todos = $state<TodoSchema>({
+    id: `todos-${todoTitle}`,
+    todoHeader: '',
+    todoItems: []
+  });
+
+  onMount(() => {
+    if (!browser) return;
+    try {
+      const raw = localStorage.getItem(todos.id);
+      if (!raw) {
+        todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
+          id: `todo-${Date.now()}-${index}`,
+          text: '',
+          isRemoving: false,
+          isReadding: false
+        }));
+        return;
+      }
+      const parsed = JSON.parse(raw);
+
+      if (parsed && parsed.todoItems) {
+        todos = {
+          ...parsed,
+          todoItems: parsed.todoItems.map((item: TodoItems) => ({
+            ...item,
+            isRemoving: false,
+            isReadding: false
+          }))
+        };
+      }
+    } catch (err) {
+      console.error('Error loading todos from localStorage:', err);
+
+      todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
+        id: `todo-${Date.now()}-${index}`,
+        text: '',
+        isRemoving: false,
+        isReadding: false
+      }));
+    }
+  });
+
   onMount(() => {
     isMounted = true;
+  });
+
+  $effect(() => {
+    if (!browser) return;
+
+    try {
+      const todosToSave = {
+        ...todos,
+        todoItems: todos.todoItems.map(({ id, text }) => ({ id, text }))
+      };
+      localStorage.setItem(todos.id, JSON.stringify(todosToSave));
+    } catch (err) {
+      console.error('Error saving todos to localStorage:', err);
+    }
   });
 
   $effect(() => {
@@ -23,14 +89,6 @@
       }
     }
   });
-
-  interface TodoMainProps {
-    todoTitle: string;
-    color?: ColorName;
-    containerClass?: string;
-  }
-
-  let { todoTitle, color = 'slate', containerClass = '' }: TodoMainProps = $props();
 </script>
 
 {#if isMounted}
@@ -39,9 +97,9 @@
       'border-crisp absolute top-1/2 left-1/2 flex h-fit -translate-1/2 flex-col gap-y-1.5 rounded-md bg-white  select-none sm:w-[325px]',
       containerClass
     )}
-    style={`width: ${todoWidth}px;`}
+    style="width: {todoWidth}px;"
   >
-    <TodoHeader {todoTitle} {color} />
-    <TodoBody {todoTitle} {color} />
+    <TodoHeader {todoTitle} bind:todoHeader={todos.todoHeader} {color} />
+    <TodoBody {todoTitle} bind:todoItems={todos.todoItems} {color} />
   </div>
 {/if}

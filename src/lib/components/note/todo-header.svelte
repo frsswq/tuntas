@@ -4,10 +4,11 @@
 
   interface TodoHeaderProps {
     todoTitle: string;
+    todoHeader: string;
     color?: ColorName;
   }
 
-  let { todoTitle, color = 'slate' }: TodoHeaderProps = $props();
+  let { todoTitle, todoHeader = $bindable(), color = 'slate' }: TodoHeaderProps = $props();
 </script>
 
 <div
@@ -23,5 +24,6 @@
     id={`${todoTitle}-detail`}
     class={`h-4 max-w-[75px] rounded-none border border-transparent ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none focus-visible:border-transparent focus-visible:border-b-black focus-visible:${colorClasses[color].border_b} focus-visible:ring-0`}
     maxlength={10}
+    bind:value={todoHeader}
   />
 </div>

@@ -37,3 +37,16 @@ export const colorClasses: ColorClasses = {
 };
 
 export type ColorName = keyof ColorClasses;
+
+export interface TodoItems {
+  id: string;
+  text: string;
+  isRemoving?: boolean;
+  isReadding?: boolean;
+}
+
+export interface TodoSchema {
+  id: string;
+  todoHeader: string;
+  todoItems: TodoItems[];
+}

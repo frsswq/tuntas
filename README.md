@@ -1,6 +1,6 @@
 ## ℹ️ About
 
-Tuntas is a minimalist to-do list web application designed to force prioritization and help you focus on getting your tasks done. Inspired by the design of analog to-do lists like [Ugmonk](https://ugmonk.com/).
+**Tuntas** is a minimalist to-do list web application designed to force prioritization and help you focus on getting your tasks done. Inspired by the design of analog to-do lists like [Ugmonk](https://ugmonk.com/).
 
 ## ✨ Features
 
