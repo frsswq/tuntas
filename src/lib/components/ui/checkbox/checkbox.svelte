@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cn, type WithoutChildrenOrChild } from '$lib/utils.js';
+  import CheckIcon from '@lucide/svelte/icons/check';
   import { Checkbox as CheckboxPrimitive } from 'bits-ui';
-  import XIcon from '../../icons/mynaui:x.svelte';
 
   type CheckboxProps = WithoutChildrenOrChild<CheckboxPrimitive.RootProps> & {
     iconClass?: string;
@@ -29,7 +29,7 @@
   {#snippet children({ checked })}
     <div data-slot="checkbox-indicator" class="text-current transition-none">
       {#if checked}
-        <XIcon class={iconClass} />
+        <CheckIcon class={iconClass} />
       {/if}
     </div>
   {/snippet}
