@@ -1,7 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { type ColorName } from '../types';
+  import { cn } from '../utils';
+  import ChevronLeftIcon from './icons/mynaui:chevron-left.svelte';
+  import ChevronRightIcon from './icons/mynaui:chevron-right.svelte';
   import TodoMain from './note/todo-main.svelte';
+  import Button from './ui/button/button.svelte';
 
   type Direction = 'none' | 'left' | 'right';
 
@@ -206,8 +210,6 @@
   });
 </script>
 
-<svelte:document onkeydown={handleKeyDown} />
-
 <main class="text-sm leading-[1.333] tracking-tight">
   <section
     id="carousel"
@@ -240,6 +242,20 @@
       ></span>
     {/each}
   </div>
+  {#each { length: 2 } as _, index}
+    <Button
+      class={cn(
+        `border-crisp absolute top-[50dvh] z-1 flex size-6 cursor-pointer items-center justify-center rounded-full border-none bg-transparent shadow-transparent hover:border-1 hover:border-slate-500 hover:bg-transparent`,
+        index % 2 === 0 ? 'left-6' : 'right-6'
+      )}
+    >
+      {#if index % 2 === 0}
+        <ChevronLeftIcon class="inline-flex size-5 bg-transparent  text-slate-500" />
+      {:else}
+        <ChevronRightIcon class="inline-flex size-5 bg-transparent text-slate-500" />
+      {/if}
+    </Button>
+  {/each}
 </main>
 
 <style>

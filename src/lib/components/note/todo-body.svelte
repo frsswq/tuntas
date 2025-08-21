@@ -2,7 +2,7 @@
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
   import { cn } from '@/lib/utils';
 
-  import { tick } from 'svelte';
+  import { onMount } from 'svelte';
   import { colorClasses, type ColorName, type TodoItems } from '../../types';
   import Textarea from '../ui/textarea/textarea.svelte';
 
@@ -26,6 +26,18 @@
     el.style.height = 'auto';
     const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
     el.style.height = Math.min(el.scrollHeight, lineHeight * MAX_LINES) + 'px';
+  };
+
+  const handleTextareaKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      const el = e.currentTarget as HTMLTextAreaElement;
+      const currentLines = getVisualLineCount(el);
+
+      if (currentLines >= MAX_LINES) {
+        e.preventDefault();
+        return;
+      }
+    }
   };
 
   const handleTextareaInput = (e: Event, todoId: string) => {
@@ -69,19 +81,16 @@
     todoItems[todoIndex].isReadding = false;
   };
 
-  const autoResizeTextareas = async () => {
-    await tick();
+  onMount(() => {
     const textareas = document.querySelectorAll(`textarea[aria-label*="${todoTitle} Task"]`);
     textareas.forEach((textarea) => {
       if (textarea instanceof HTMLTextAreaElement && textarea.value.trim()) {
         resizeTextArea(textarea);
       }
     });
-  };
-  $effect(() => {
-    todoItems;
-    autoResizeTextareas();
   });
+
+  // @TODO: add delete all features
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
@@ -112,6 +121,7 @@
         )}
         style={`background-image: repeating-linear-gradient(transparent, transparent 1.7rem, var(--color-${color}-300) 1.7rem, var(--color-${color}-300) 1.75rem);`}
         oninput={(e) => handleTextareaInput(e, todo.id)}
+        onkeydown={(e) => handleTextareaKeydown(e)}
         spellcheck="false"
         autocomplete="off"
         rows={1}
