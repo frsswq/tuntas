@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import type { TodoItems, TodoMainProps, TodoSchema } from '@/lib/types';
+  import type { TodoItem, TodoMainProps, TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { onMount } from 'svelte';
   import { innerWidth } from 'svelte/reactivity/window';
@@ -37,7 +37,7 @@
       if (parsed && parsed.todoItems) {
         todos = {
           ...parsed,
-          todoItems: parsed.todoItems.map((item: TodoItems) => ({
+          todoItems: parsed.todoItems.map((item: TodoItem) => ({
             ...item,
             text: item.text.trim(),
             isRemoving: false,

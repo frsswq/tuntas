@@ -47,6 +47,7 @@
         disabled={todo.isRemoving || todo.isReadding}
       />
       <Textarea
+        data-id={todo.id}
         aria-label={`${todoTitle} Task ${todo.id}`}
         class={cn(
           `min-h-7 w-full resize-none overflow-y-auto rounded-none border-0 bg-transparent px-0.5 py-0 text-lg leading-7 font-[400] tracking-tighter ${colorClasses[color].text} ${colorClasses[color].caret} bg-local shadow-none sm:text-lg`,
