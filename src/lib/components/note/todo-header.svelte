@@ -1,13 +1,7 @@
 <script lang="ts">
   import { cn } from '@/lib/utils';
-  import { colorClasses, type ColorName } from '../../types';
+  import { colorClasses, type TodoHeaderProps } from '../../types';
   import Input from '../ui/input/input.svelte';
-
-  interface TodoHeaderProps {
-    todoTitle: string;
-    todoHeader: string;
-    color?: ColorName;
-  }
 
   let { todoTitle, todoHeader = $bindable(''), color = 'slate' }: TodoHeaderProps = $props();
 </script>

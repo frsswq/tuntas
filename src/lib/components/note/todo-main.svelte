@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import { type ColorName, type TodoItems, type TodoSchema } from '@/lib/types';
+  import type { TodoItems, TodoMainProps, TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { onMount } from 'svelte';
   import { innerWidth } from 'svelte/reactivity/window';
@@ -10,12 +10,6 @@
   let todoWidth = $state(0);
   let isMounted = $state(false);
   const MOBILE_TODO_PADDING = 80;
-
-  interface TodoMainProps {
-    todoTitle: string;
-    color?: ColorName;
-    containerClass?: string;
-  }
 
   let { todoTitle, color = 'slate', containerClass = '' }: TodoMainProps = $props();
 

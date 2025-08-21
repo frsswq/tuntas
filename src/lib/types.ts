@@ -50,3 +50,21 @@ export interface TodoSchema {
   todoHeader: string;
   todoItems: TodoItems[];
 }
+
+export interface TodoBodyProps {
+  color?: ColorName;
+  todoTitle: string;
+  todoItems: TodoItems[];
+}
+
+export interface TodoMainProps {
+  todoTitle: string;
+  color?: ColorName;
+  containerClass?: string;
+}
+
+export interface TodoHeaderProps {
+  todoTitle: string;
+  todoHeader: string;
+  color?: ColorName;
+}
