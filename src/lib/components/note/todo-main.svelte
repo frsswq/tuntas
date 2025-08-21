@@ -30,12 +30,14 @@
     try {
       const raw = localStorage.getItem(todos.id);
       if (!raw) {
-        todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
+        const emptyTodos = Array.from({ length: 10 }, (_, index) => ({
           id: `todo-${Date.now()}-${index}`,
           text: '',
           isRemoving: false,
           isReadding: false
         }));
+        todos = { ...todos, todoItems: emptyTodos };
+        isMounted = true;
         return;
       }
       const parsed = JSON.parse(raw);
@@ -53,17 +55,16 @@
     } catch (err) {
       console.error('Error loading todos from localStorage:', err);
 
-      todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
+      const emptyTodos = Array.from({ length: 10 }, (_, index) => ({
         id: `todo-${Date.now()}-${index}`,
         text: '',
         isRemoving: false,
         isReadding: false
       }));
+      todos = { ...todos, todoItems: emptyTodos };
+    } finally {
+      isMounted = true;
     }
-  });
-
-  onMount(() => {
-    isMounted = true;
   });
 
   $effect(() => {

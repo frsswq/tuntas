@@ -11,7 +11,7 @@
     todoItems: TodoItems[];
   }
 
-  let { color = 'slate', todoTitle, todoItems = $bindable() }: TodoBodyProps = $props();
+  let { color = 'slate', todoTitle, todoItems = $bindable([]) }: TodoBodyProps = $props();
 
   const MAX_LINES = 2;
 
