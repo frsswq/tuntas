@@ -30,14 +30,12 @@
     try {
       const raw = localStorage.getItem(todos.id);
       if (!raw) {
-        const emptyTodos = Array.from({ length: 10 }, (_, index) => ({
+        todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
           id: `todo-${Date.now()}-${index}`,
           text: '',
           isRemoving: false,
           isReadding: false
         }));
-        todos = { ...todos, todoItems: emptyTodos };
-        isMounted = true;
         return;
       }
       const parsed = JSON.parse(raw);
@@ -47,6 +45,7 @@
           ...parsed,
           todoItems: parsed.todoItems.map((item: TodoItems) => ({
             ...item,
+            text: item.text.trim(),
             isRemoving: false,
             isReadding: false
           }))
@@ -55,13 +54,12 @@
     } catch (err) {
       console.error('Error loading todos from localStorage:', err);
 
-      const emptyTodos = Array.from({ length: 10 }, (_, index) => ({
+      todos.todoItems = Array.from({ length: 10 }, (_, index) => ({
         id: `todo-${Date.now()}-${index}`,
         text: '',
         isRemoving: false,
         isReadding: false
       }));
-      todos = { ...todos, todoItems: emptyTodos };
     } finally {
       isMounted = true;
     }
@@ -73,7 +71,7 @@
     try {
       const todosToSave = {
         ...todos,
-        todoItems: todos.todoItems.map(({ id, text }) => ({ id, text }))
+        todoItems: todos.todoItems.map(({ id, text }) => ({ id, text: text.trim() }))
       };
       localStorage.setItem(todos.id, JSON.stringify(todosToSave));
     } catch (err) {

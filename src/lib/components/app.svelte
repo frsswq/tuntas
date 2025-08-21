@@ -219,8 +219,8 @@
     role="presentation"
     aria-label="Todo cards carousel"
     aria-roledescription="carousel"
-    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-hidden {isDragging &&
-      'cursor-grabbing'}"
+    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-y-scroll {isDragging &&
+      'cursor-grabbing touch-pan-y'}"
   >
     {#each CARDS as { todoTitle, color, bg }, index}
       <div

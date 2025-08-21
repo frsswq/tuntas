@@ -2,6 +2,7 @@
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
   import { cn } from '@/lib/utils';
 
+  import { tick } from 'svelte';
   import { colorClasses, type ColorName, type TodoItems } from '../../types';
   import Textarea from '../ui/textarea/textarea.svelte';
 
@@ -13,12 +14,18 @@
 
   let { color = 'slate', todoTitle, todoItems = $bindable([]) }: TodoBodyProps = $props();
 
-  const MAX_LINES = 2;
+  const MAX_LINES = 3;
 
   const getVisualLineCount = (el: HTMLTextAreaElement): number => {
     const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
     const actualHeight = el.scrollHeight;
     return Math.ceil(actualHeight / lineHeight);
+  };
+
+  const resizeTextArea = (el: HTMLTextAreaElement) => {
+    el.style.height = 'auto';
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
+    el.style.height = Math.min(el.scrollHeight, lineHeight * MAX_LINES) + 'px';
   };
 
   const handleTextareaInput = (e: Event, todoId: string) => {
@@ -34,8 +41,7 @@
       el.setSelectionRange(el.value.length, el.value.length);
     }
 
-    const lineHeight = parseInt(getComputedStyle(el).lineHeight, 10) || 28;
-    el.style.height = Math.min(el.scrollHeight, lineHeight * MAX_LINES) + 'px';
+    resizeTextArea(el);
 
     const todoIndex = todoItems.findIndex((t) => t.id === todoId);
     if (todoIndex === -1) return;
@@ -62,6 +68,20 @@
     await new Promise((r) => setTimeout(r, 50));
     todoItems[todoIndex].isReadding = false;
   };
+
+  const autoResizeTextareas = async () => {
+    await tick();
+    const textareas = document.querySelectorAll(`textarea[aria-label*="${todoTitle} Task"]`);
+    textareas.forEach((textarea) => {
+      if (textarea instanceof HTMLTextAreaElement && textarea.value.trim()) {
+        resizeTextArea(textarea);
+      }
+    });
+  };
+  $effect(() => {
+    todoItems;
+    autoResizeTextareas();
+  });
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
