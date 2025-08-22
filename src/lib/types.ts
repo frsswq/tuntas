@@ -12,6 +12,7 @@ export interface ColorClasses {
   sky: ColorSet;
 }
 
+// not types
 export const colorClasses: ColorClasses = {
   slate: {
     bg: 'bg-white',

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { TodoCard } from '../types';
+  import { type TodoCard } from '../types';
   import { cn } from '../utils';
   import ChevronLeftIcon from './icons/mynaui:chevron-left.svelte';
   import ChevronRightIcon from './icons/mynaui:chevron-right.svelte';

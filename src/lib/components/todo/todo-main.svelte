@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import type { TodoItem, TodoMainProps, TodoSchema } from '@/lib/types';
+  import { colorClasses, type TodoItem, type TodoMainProps, type TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { onMount } from 'svelte';
   import { innerWidth } from 'svelte/reactivity/window';
@@ -88,8 +88,9 @@
 
 {#if isMounted}
   <div
+    id="todo-main"
     class={cn(
-      'border-crisp absolute top-1/2 left-1/2 flex h-fit -translate-1/2 flex-col gap-y-1.5 rounded-md bg-white  select-none sm:w-[325px]',
+      `absolute top-1/2 left-1/2 flex h-fit -translate-1/2 flex-col gap-y-1.5 rounded-md border-[0.5px] bg-white ${colorClasses[color].border} select-none sm:w-[325px]`,
       containerClass
     )}
     style="width: {todoWidth}px;"
@@ -98,3 +99,10 @@
     <TodoBody {todoTitle} bind:todoItems={todos.todoItems} {color} />
   </div>
 {/if}
+
+<style>
+  #todo-main {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-clip: padding-box;
+  }
+</style>
