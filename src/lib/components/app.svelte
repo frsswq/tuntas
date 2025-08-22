@@ -222,28 +222,27 @@
   <div aria-live="polite" aria-atomic="true" class="sr-only">
     {CARDS[currentIndex].todoTitle} Card
   </div>
-  <div class="absolute top-6 left-7 z-1 flex -translate-x-1/2 transform flex-col space-y-2">
+  <div class="absolute top-6 left-6 flex flex-col space-y-2">
     {#each CARDS as _, index}
       <span
-        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp size-2 rounded-full  p-0 transition-colors duration-200`}
+        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp z-1 size-2 rounded-full p-0 transition-colors duration-200`}
       ></span>
     {/each}
   </div>
-  {#each { length: 2 } as _, index}
-    <Button
-      onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
-      class={cn(
-        `border-crisp absolute top-[50dvh] z-1 flex size-6 cursor-pointer items-center justify-center rounded-full border-none bg-transparent shadow-transparent hover:border-1 hover:border-slate-500 hover:bg-transparent`,
-        index % 2 === 0 ? 'left-6' : 'right-6'
-      )}
-    >
-      {#if index % 2 === 0}
-        <ChevronLeftIcon class="inline-flex size-5 bg-transparent  text-slate-500" />
-      {:else}
-        <ChevronRightIcon class="inline-flex size-5 bg-transparent text-slate-500" />
-      {/if}
-    </Button>
-  {/each}
+  <div class="absolute top-6 right-6 hidden gap-x-1.5 sm:flex">
+    {#each [ChevronLeftIcon, ChevronRightIcon] as Icon, index}
+      <Button
+        onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
+        class={cn(
+          `border-crisp p- relative z-1 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
+        )}
+      >
+        <Icon
+          class={`size-5 text-slate-500 hover:text-black  ${index % 2 === 0 ? 'mr-0.25' : 'ml-0.25'}`}
+        />
+      </Button>
+    {/each}
+  </div>
 </main>
 
 <style>
