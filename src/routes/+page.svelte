@@ -1,5 +1,5 @@
 <script lang="ts">
-  import NoteApp from '@/lib/components/app.svelte';
+  import TodoApp from '@/lib/components/app.svelte';
 </script>
 
-<NoteApp />
+<TodoApp />

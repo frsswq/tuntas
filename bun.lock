@@ -9,6 +9,7 @@
         "better-auth": "latest",
         "dotenv": "latest",
         "drizzle-orm": "latest",
+        "pg": "latest",
         "postgres": "latest",
       },
       "devDependencies": {

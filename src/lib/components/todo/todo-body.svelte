@@ -21,8 +21,6 @@
       }
     });
   });
-
-  // @TODO: add delete all features
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">

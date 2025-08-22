@@ -68,3 +68,9 @@ export interface TodoHeaderProps {
   todoHeader: string;
   color?: ColorName;
 }
+
+export interface TodoCard {
+  todoTitle: string;
+  color: ColorName;
+  bg: string;
+}

@@ -82,6 +82,8 @@
       }
     }
   });
+
+  // @TODO: add delete all features
 </script>
 
 {#if isMounted}

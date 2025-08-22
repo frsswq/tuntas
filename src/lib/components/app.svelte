@@ -1,19 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { type ColorName } from '../types';
+  import type { TodoCard } from '../types';
   import { cn } from '../utils';
   import ChevronLeftIcon from './icons/mynaui:chevron-left.svelte';
   import ChevronRightIcon from './icons/mynaui:chevron-right.svelte';
-  import TodoMain from './note/todo-main.svelte';
+  import TodoMain from './todo/todo-main.svelte';
   import Button from './ui/button/button.svelte';
 
   type Direction = 'none' | 'left' | 'right';
-
-  interface TodoCard {
-    todoTitle: string;
-    color: ColorName;
-    bg: string;
-  }
 
   const CARDS: TodoCard[] = [
     { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
@@ -23,7 +17,7 @@
 
   const TRANSITION_DURATION = 300;
   const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
-  const DRAGGING_THRESHOLD = 10;
+  const DRAGGING_THRESHOLD = 15;
 
   let currentIndex = $state(0);
   let isDragging = $state(false);
@@ -56,6 +50,23 @@
     );
   };
 
+  const forEachCard = (callback: (card: HTMLElement, index: number) => void) => {
+    if (!carouselEl) return;
+    CARDS.forEach((_, index) => {
+      const card = carouselEl?.children[index] as HTMLElement;
+      if (card) callback(card, index);
+    });
+  };
+
+  const setupTransition = (enable: boolean, onEnd?: () => void) => {
+    forEachCard((card) => {
+      card.style.transition = enable ? `transform ${TRANSITION_DURATION}ms ${EASING}` : 'none';
+      if (enable && onEnd) {
+        card.addEventListener('transitionend', onEnd, { once: true });
+      }
+    });
+  };
+
   const updateCardPositions = (dragOffset = 0, direction: Direction = 'none') => {
     if (!carouselEl) return;
 
@@ -81,10 +92,10 @@
     if (!isTransitioning) return;
     if (isDragging) return;
 
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (!card || index === currentIndex) return;
-      card.style.display = 'none';
+    forEachCard((card, index) => {
+      if (index !== currentIndex) {
+        card.style.display = 'none';
+      }
     });
 
     isTransitioning = false;
@@ -109,11 +120,7 @@
     isTransitioning = true;
     currentTranslateX = 0;
 
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (!card) return;
-      card.style.transition = 'none';
-    });
+    setupTransition(false);
 
     if (!('touches' in e)) {
       document.addEventListener('mousemove', handleDragMove);
@@ -149,35 +156,22 @@
     currentTranslateX = 0;
     isDragging = false;
 
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (!card) return;
-      card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
-      card.addEventListener('transitionend', handleTransitionEnd, { once: true });
-    });
-
+    setupTransition(true, handleTransitionEnd);
     updateCardPositions(0);
 
     document.removeEventListener('mousemove', handleDragMove);
     document.removeEventListener('mouseup', handleDragEnd);
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    e.preventDefault();
-
+  const navigateCard = (direction: Direction) => {
     if (isTransitioning || isDragging) return;
 
-    const direction: Direction = e.key === 'ArrowLeft' ? 'left' : 'right';
     const nextIndex =
       direction === 'left' ? normalizeIndex(currentIndex - 1) : normalizeIndex(currentIndex + 1);
 
     if (!carouselEl) return;
 
-    CARDS.forEach((_, index) => {
-      const card = carouselEl?.children[index] as HTMLElement;
-      if (!card) return;
-
+    forEachCard((card, index) => {
       card.style.transition = 'none';
       const startTransform = getTransform(index, 0);
       card.style.transform = `translateX(${startTransform}%)`;
@@ -189,14 +183,7 @@
         if (!carouselEl) return;
 
         isTransitioning = true;
-
-        CARDS.forEach((_, index) => {
-          const card = carouselEl!.children[index] as HTMLElement | undefined;
-          if (!card) return;
-          card.style.transition = `transform ${TRANSITION_DURATION}ms ${EASING}`;
-          card.addEventListener('transitionend', handleTransitionEnd, { once: true });
-        });
-
+        setupTransition(true, handleTransitionEnd);
         currentIndex = nextIndex;
         updateCardPositions(0, direction);
       });
@@ -221,7 +208,7 @@
     role="presentation"
     aria-label="Todo cards carousel"
     aria-roledescription="carousel"
-    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-y-scroll {isDragging &&
+    class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-x-hidden overflow-y-scroll {isDragging &&
       'cursor-grabbing touch-pan-y'}"
   >
     {#each CARDS as { todoTitle, color, bg }, index}
@@ -235,15 +222,16 @@
   <div aria-live="polite" aria-atomic="true" class="sr-only">
     {CARDS[currentIndex].todoTitle} Card
   </div>
-  <div class="absolute bottom-6 left-1/2 z-1 flex -translate-x-1/2 transform space-x-2">
+  <div class="absolute top-6 left-7 z-1 flex -translate-x-1/2 transform flex-col space-y-2">
     {#each CARDS as _, index}
       <span
-        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp size-2 rounded-full transition-colors duration-200`}
+        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp size-2 rounded-full  p-0 transition-colors duration-200`}
       ></span>
     {/each}
   </div>
   {#each { length: 2 } as _, index}
     <Button
+      onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
       class={cn(
         `border-crisp absolute top-[50dvh] z-1 flex size-6 cursor-pointer items-center justify-center rounded-full border-none bg-transparent shadow-transparent hover:border-1 hover:border-slate-500 hover:bg-transparent`,
         index % 2 === 0 ? 'left-6' : 'right-6'
