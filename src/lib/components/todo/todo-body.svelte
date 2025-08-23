@@ -11,7 +11,7 @@
     resizeTextArea
   } from './todo-body';
 
-  let { color = 'slate', todoTitle, todoItems = $bindable([]) }: TodoBodyProps = $props();
+  let { color = 'slate', todoTitle, todoItems = $bindable() }: TodoBodyProps = $props();
 
   onMount(() => {
     const textareas = document.querySelectorAll(`textarea[aria-label*="${todoTitle} Task"]`);

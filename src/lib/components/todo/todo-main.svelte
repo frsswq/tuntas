@@ -11,7 +11,12 @@
   let isMounted = $state(false);
   const MOBILE_TODO_PADDING = 80;
 
-  let { todoTitle, color = 'slate', containerClass = '' }: TodoMainProps = $props();
+  let {
+    todoTitle,
+    todoData = $bindable(),
+    color = 'slate',
+    containerClass = ''
+  }: TodoMainProps = $props();
 
   let todos = $state<TodoSchema>({
     id: `todos-${todoTitle}`,
@@ -83,7 +88,9 @@
     }
   });
 
-  // @TODO: add delete all features
+  $effect(() => {
+    todoData = todos;
+  });
 </script>
 
 {#if isMounted}

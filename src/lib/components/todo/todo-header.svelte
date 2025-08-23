@@ -14,7 +14,6 @@
   </h1>
   <label for={`${todoTitle}-detail`} class="sr-only">{todoTitle} Detail</label>
   <!-- @TODO: make it limit one line instead of maxlength -->
-  <!-- @TODO: fix input bottom border disappearing on focus -->
   <Input
     id={`${todoTitle}-detail`}
     class={cn(

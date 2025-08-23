@@ -14,7 +14,7 @@
     <Button
       onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
       class={cn(
-        `border-crisp p- relative z-10 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
+        `border-crisp relative z-10 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 p-0 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
       )}
     >
       <Icon

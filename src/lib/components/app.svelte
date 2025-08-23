@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Direction, TodoCard } from '../types';
+  import type { Direction, TodoCard, TodoSchema } from '../types';
+  import DeleteTodo from './delete-todo.svelte';
   import DotsIndicator from './dots-indicator.svelte';
   import NavigateButton from './navigate-button.svelte';
   import TodoMain from './todo/todo-main.svelte';
@@ -14,6 +15,14 @@
   const TRANSITION_DURATION = 300;
   const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
   const DRAGGING_THRESHOLD = 15;
+
+  let todoDataArray = $state<TodoSchema[]>(
+    TODO.map(({ todoTitle }) => ({
+      id: `todos-${todoTitle}`,
+      todoHeader: '',
+      todoItems: []
+    }))
+  );
 
   let currentIndex = $state(0);
   let isDragging = $state(false);
@@ -185,6 +194,8 @@
       updateCardPositions(0);
     }
   });
+
+  // @TODO: add delete all features
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
@@ -204,12 +215,18 @@
       <div
         class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 z-1 will-change-transform`}
       >
-        <TodoMain {todoTitle} containerClass={`${bg}`} {color} />
+        <TodoMain
+          {todoTitle}
+          containerClass={`${bg}`}
+          {color}
+          bind:todoData={todoDataArray[index]}
+        />
       </div>
     {/each}
   </section>
   <NavigateButton {navigateCard} />
   <DotsIndicator {currentIndex} {TODO} />
+  <DeleteTodo />
 </main>
 
 <style>

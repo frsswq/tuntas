@@ -60,6 +60,7 @@ export interface TodoBodyProps {
 
 export interface TodoMainProps {
   todoTitle: string;
+  todoData: TodoSchema;
   color?: ColorName;
   containerClass?: string;
 }
