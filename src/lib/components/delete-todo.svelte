@@ -15,5 +15,19 @@
     >
       <TrashIcon class="size-6 text-slate-500" />
     </AlertDialog.Trigger>
+    <AlertDialog.Content class="border-none">
+      <AlertDialog.Header>
+        <AlertDialog.Title>Clear all todos?</AlertDialog.Title>
+        <AlertDialog.Description>
+          This will permanently remove all current todos. This action cannot be undone.
+        </AlertDialog.Description>
+      </AlertDialog.Header>
+      <AlertDialog.Footer>
+        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+        <AlertDialog.Action class="bg-red-600 text-white hover:bg-red-700">
+          Delete All
+        </AlertDialog.Action>
+      </AlertDialog.Footer>
+    </AlertDialog.Content>
   </AlertDialog.Root>
 </div>
