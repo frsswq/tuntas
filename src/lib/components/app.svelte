@@ -22,6 +22,7 @@
   let currentIndex = $state(0);
   let isDragging = $state(false);
   let isTransitioning = $state(false);
+  let isPointerDown = $state(false);
   let startX = $state(0);
   let currentTranslateX = $state(0);
   let carouselEl: HTMLElement | null;
@@ -101,48 +102,44 @@
     isTransitioning = false;
   };
 
-  const getClientX = (e: TouchEvent | MouseEvent) => {
-    return 'touches' in e ? e.touches[0]?.clientX : e.clientX;
-  };
-
-  const handleDragStart = (e: TouchEvent | MouseEvent) => {
+  const handlePointerDown = (e: PointerEvent) => {
     if (isInteractiveTarget(e.target)) return;
-
-    if ('touches' in e && e.touches.length > 1) return;
-
-    const clientX = getClientX(e);
-    if (clientX === undefined) return;
+    if (e.isPrimary === false) return;
 
     e.preventDefault();
 
-    startX = clientX;
-    isDragging = true;
-    isTransitioning = true;
+    startX = e.clientX;
     currentTranslateX = 0;
+    isPointerDown = true;
 
-    setupTransition(false);
-
-    if (!('touches' in e)) {
-      document.addEventListener('mousemove', handleDragMove);
-      document.addEventListener('mouseup', handleDragEnd);
-    }
+    carouselEl?.setPointerCapture(e.pointerId);
   };
 
-  const handleDragMove = (e: TouchEvent | MouseEvent) => {
-    if (!isDragging) return;
-    if ('touches' in e && e.touches.length > 1) return;
-
-    const clientX = getClientX(e);
-    if (clientX === undefined) return;
+  const handlePointerMove = (e: PointerEvent) => {
+    if (!isPointerDown || e.isPrimary === false) return;
 
     e.preventDefault();
-    const deltaX = clientX - startX;
+
+    const deltaX = e.clientX - startX;
+
+    if (!isDragging && Math.abs(deltaX) > 3) {
+      isDragging = true;
+      isTransitioning = true;
+      setupTransition(false);
+    }
+
+    if (!isDragging) return;
+
     currentTranslateX = (deltaX / carouselEl!.offsetWidth) * 100;
     currentTranslateX = Math.max(-100, Math.min(100, currentTranslateX));
     updateCardPositions(currentTranslateX);
   };
 
-  const handleDragEnd = () => {
+  const handlePointerUp = (e: PointerEvent) => {
+    if (!isPointerDown || e.isPrimary === false) return;
+
+    isPointerDown = false;
+
     if (!isDragging) return;
 
     if (Math.abs(currentTranslateX) > DRAGGING_THRESHOLD) {
@@ -158,9 +155,6 @@
 
     setupTransition(true, handleTransitionEnd);
     updateCardPositions(0);
-
-    document.removeEventListener('mousemove', handleDragMove);
-    document.removeEventListener('mouseup', handleDragEnd);
   };
 
   const navigateCard = (direction: Direction) => {
@@ -201,15 +195,15 @@
   <section
     id="carousel"
     bind:this={carouselEl}
-    ontouchstart={handleDragStart}
-    ontouchmove={handleDragMove}
-    ontouchend={handleDragEnd}
-    onmousedown={handleDragStart}
+    onpointerdown={handlePointerDown}
+    onpointermove={handlePointerMove}
+    onpointerup={handlePointerUp}
     role="presentation"
     aria-label="Todo cards carousel"
     aria-roledescription="carousel"
     class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-x-hidden overflow-y-scroll {isDragging &&
       'cursor-grabbing touch-pan-y'}"
+    style="touch-action: pan-y;"
   >
     {#each CARDS as { todoTitle, color, bg }, index}
       <div
@@ -225,7 +219,7 @@
   <div class="absolute top-6 left-6 flex flex-col space-y-2">
     {#each CARDS as _, index}
       <span
-        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp z-1 size-2 rounded-full p-0 transition-colors duration-200`}
+        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp z-10 size-2 rounded-full p-0 transition-colors duration-200`}
       ></span>
     {/each}
   </div>
@@ -234,7 +228,7 @@
       <Button
         onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
         class={cn(
-          `border-crisp p- relative z-1 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
+          `border-crisp p- relative z-10 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
         )}
       >
         <Icon
