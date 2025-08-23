@@ -75,3 +75,5 @@ export interface TodoCard {
   color: ColorName;
   bg: string;
 }
+
+export type Direction = 'none' | 'left' | 'right';

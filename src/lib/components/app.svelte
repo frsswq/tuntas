@@ -1,15 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { type TodoCard } from '../types';
-  import { cn } from '../utils';
-  import ChevronLeftIcon from './icons/mynaui:chevron-left.svelte';
-  import ChevronRightIcon from './icons/mynaui:chevron-right.svelte';
+  import type { Direction, TodoCard } from '../types';
+  import DotsIndicator from './dots-indicator.svelte';
+  import NavigateButton from './navigate-button.svelte';
   import TodoMain from './todo/todo-main.svelte';
-  import Button from './ui/button/button.svelte';
 
-  type Direction = 'none' | 'left' | 'right';
-
-  const CARDS: TodoCard[] = [
+  const TODO: TodoCard[] = [
     { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
     { todoTitle: 'Next', color: 'teal', bg: 'bg-teal-50' },
     { todoTitle: 'Someday', color: 'sky', bg: 'bg-sky-50' }
@@ -28,8 +24,8 @@
   let carouselEl: HTMLElement | null;
 
   const normalizeIndex = (index: number) => {
-    if (index < 0) return CARDS.length - 1;
-    if (index >= CARDS.length) return 0;
+    if (index < 0) return TODO.length - 1;
+    if (index >= TODO.length) return 0;
     return index;
   };
 
@@ -53,7 +49,7 @@
 
   const forEachCard = (callback: (card: HTMLElement, index: number) => void) => {
     if (!carouselEl) return;
-    CARDS.forEach((_, index) => {
+    TODO.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
       if (card) callback(card, index);
     });
@@ -71,7 +67,7 @@
   const updateCardPositions = (dragOffset = 0, direction: Direction = 'none') => {
     if (!carouselEl) return;
 
-    CARDS.forEach((_, index) => {
+    TODO.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
 
       if (!card) return;
@@ -199,13 +195,12 @@
     onpointermove={handlePointerMove}
     onpointerup={handlePointerUp}
     role="presentation"
-    aria-label="Todo cards carousel"
+    aria-label="Todo TODO carousel"
     aria-roledescription="carousel"
     class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-x-hidden overflow-y-scroll {isDragging &&
       'cursor-grabbing touch-pan-y'}"
-    style="touch-action: pan-y;"
   >
-    {#each CARDS as { todoTitle, color, bg }, index}
+    {#each TODO as { todoTitle, color, bg }, index}
       <div
         class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 z-1 will-change-transform`}
       >
@@ -213,30 +208,8 @@
       </div>
     {/each}
   </section>
-  <div aria-live="polite" aria-atomic="true" class="sr-only">
-    {CARDS[currentIndex].todoTitle} Card
-  </div>
-  <div class="absolute top-6 left-6 flex flex-col space-y-2">
-    {#each CARDS as _, index}
-      <span
-        class={`${index === currentIndex ? 'bg-slate-400' : 'bg-slate-200'} border-crisp z-10 size-2 rounded-full p-0 transition-colors duration-200`}
-      ></span>
-    {/each}
-  </div>
-  <div class="absolute top-6 right-6 hidden gap-x-1.5 sm:flex">
-    {#each [ChevronLeftIcon, ChevronRightIcon] as Icon, index}
-      <Button
-        onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
-        class={cn(
-          `border-crisp p- relative z-10 size-8 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40`
-        )}
-      >
-        <Icon
-          class={`size-5 text-slate-500 hover:text-black  ${index % 2 === 0 ? 'mr-0.25' : 'ml-0.25'}`}
-        />
-      </Button>
-    {/each}
-  </div>
+  <NavigateButton {navigateCard} />
+  <DotsIndicator {currentIndex} {TODO} />
 </main>
 
 <style>
