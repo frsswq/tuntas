@@ -189,13 +189,21 @@
     });
   };
 
+  const clearCurrentTodo = () => {
+    todoDataArray[currentIndex].todoHeader = '';
+    todoDataArray[currentIndex].todoItems = Array.from({ length: 10 }, (_, index) => ({
+      id: `todo-${Date.now()}-${index}`,
+      text: '',
+      isRemoving: false,
+      isReadding: false
+    }));
+  };
+
   onMount(() => {
     if (carouselEl) {
       updateCardPositions(0);
     }
   });
-
-  // @TODO: add delete all features
 </script>
 
 <main class="text-sm leading-[1.333] tracking-tight">
@@ -226,7 +234,7 @@
   </section>
   <NavigateButton {navigateCard} />
   <DotsIndicator {currentIndex} {TODO} />
-  <DeleteTodo />
+  <DeleteTodo {clearCurrentTodo} />
 </main>
 
 <style>

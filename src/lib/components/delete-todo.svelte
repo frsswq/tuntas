@@ -3,10 +3,13 @@
   import TrashIcon from './icons/material-symbols:delete-forever-outline-rounded.svelte';
   import * as AlertDialog from './ui/alert-dialog/index';
   import { buttonVariants } from './ui/button';
+
+  let open = $state(false);
+  let { clearCurrentTodo }: { clearCurrentTodo: () => void } = $props();
 </script>
 
 <div class="absolute right-6 bottom-6 flex flex-col space-y-2">
-  <AlertDialog.Root>
+  <AlertDialog.Root bind:open>
     <AlertDialog.Trigger
       class={cn(
         `${buttonVariants({ variant: 'outline' })}`,
@@ -15,7 +18,7 @@
     >
       <TrashIcon class="size-6 text-slate-500" />
     </AlertDialog.Trigger>
-    <AlertDialog.Content class="border-none">
+    <AlertDialog.Content class="border-none" interactOutsideBehavior="close">
       <AlertDialog.Header>
         <AlertDialog.Title>Clear all todos?</AlertDialog.Title>
         <AlertDialog.Description>
@@ -23,8 +26,14 @@
         </AlertDialog.Description>
       </AlertDialog.Header>
       <AlertDialog.Footer>
-        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-        <AlertDialog.Action class="bg-red-600 text-white hover:bg-red-700">
+        <AlertDialog.Cancel class="cursor-pointer">Cancel</AlertDialog.Cancel>
+        <AlertDialog.Action
+          class="cursor-pointer bg-red-600 text-white hover:bg-red-700"
+          onclick={() => {
+            clearCurrentTodo();
+            open = false;
+          }}
+        >
           Delete All
         </AlertDialog.Action>
       </AlertDialog.Footer>
