@@ -13,10 +13,10 @@
     <AlertDialog.Trigger
       class={cn(
         `${buttonVariants({ variant: 'outline' })}`,
-        'border-crisp relative z-10 size-10 cursor-pointer items-center justify-center rounded-sm bg-slate-200/40 p-0 shadow-transparent hover:border-slate-400/80 hover:bg-slate-300/40'
+        'border-crisp relative z-10 size-10 cursor-pointer items-center justify-center rounded-sm border-red-200 bg-red-100 p-0 shadow-transparent hover:border-red-300 hover:bg-red-200'
       )}
     >
-      <TrashIcon class="size-6 text-slate-500" />
+      <TrashIcon class="size-6 text-red-500" />
     </AlertDialog.Trigger>
     <AlertDialog.Content class="border-none" interactOutsideBehavior="close">
       <AlertDialog.Header>

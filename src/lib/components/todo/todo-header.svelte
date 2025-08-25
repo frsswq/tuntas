@@ -13,12 +13,12 @@
     {todoTitle}
   </h1>
   <label for={`${todoTitle}-detail`} class="sr-only">{todoTitle} Detail</label>
-  <!-- @TODO: make it limit one line instead of maxlength -->
   <Input
     id={`${todoTitle}-detail`}
     class={cn(
-      `h-4 max-w-[75px] rounded-none border-0 border-b-1 ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none  focus-visible:ring-0 focus-visible:${colorClasses[color].border_b}`
+      `h-4  max-w-[100px] overflow-hidden rounded-none border-0 border-b-1 text-ellipsis whitespace-nowrap ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none  focus-visible:ring-0 focus-visible:${colorClasses[color].border_b}`
     )}
     bind:value={todoHeader}
+    maxlength={8}
   />
 </div>
