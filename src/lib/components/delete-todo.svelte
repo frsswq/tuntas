@@ -18,7 +18,7 @@
     >
       <TrashIcon class="size-6 text-red-500" />
     </AlertDialog.Trigger>
-    <AlertDialog.Content class="border-none" interactOutsideBehavior="close">
+    <AlertDialog.Content class="rounded-sm border-none bg-white " interactOutsideBehavior="close">
       <AlertDialog.Header>
         <AlertDialog.Title>Clear all todos?</AlertDialog.Title>
         <AlertDialog.Description>
@@ -26,9 +26,12 @@
         </AlertDialog.Description>
       </AlertDialog.Header>
       <AlertDialog.Footer>
-        <AlertDialog.Cancel class="cursor-pointer">Cancel</AlertDialog.Cancel>
+        <AlertDialog.Cancel
+          class="border-crisp cursor-pointer rounded-sm border-[0.5px] border-slate-300 bg-white font-medium tracking-tight hover:bg-slate-50"
+          >Cancel</AlertDialog.Cancel
+        >
         <AlertDialog.Action
-          class="cursor-pointer bg-red-600 text-white hover:bg-red-700"
+          class="border-crips cursor-pointer rounded-sm border-[0.5px] border-red-400 bg-red-600 font-medium tracking-tight text-white hover:bg-red-600 hover:brightness-95"
           onclick={() => {
             clearCurrentTodo();
             open = false;
