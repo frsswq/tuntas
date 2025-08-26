@@ -1,6 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
-  import { colorClasses, type TodoItem, type TodoMainProps, type TodoSchema } from '@/lib/types';
+  import { colorClasses, type TodoItem, type TodoList, type TodoMainProps } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { onMount } from 'svelte';
   import { innerWidth } from 'svelte/reactivity/window';
@@ -18,7 +18,7 @@
     containerClass = ''
   }: TodoMainProps = $props();
 
-  let todos = $state<TodoSchema>({
+  let todos = $state<TodoList>({
     id: `todos-${todoTitle}`,
     todoHeader: '',
     todoItems: []

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Direction, TodoCard, TodoSchema } from '../types';
+  import type { Direction, TodoCard, TodoList } from '../types';
   import DeleteTodo from './delete-todo.svelte';
   import DotsIndicator from './dots-indicator.svelte';
   import NavigateButton from './navigate-button.svelte';
@@ -16,7 +16,7 @@
   const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
   const DRAGGING_THRESHOLD = 15;
 
-  let todoDataArray = $state<TodoSchema[]>(
+  let todoDataArray = $state<TodoList[]>(
     TODO.map(({ todoTitle }) => ({
       id: `todos-${todoTitle}`,
       todoHeader: '',

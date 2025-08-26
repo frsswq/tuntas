@@ -46,7 +46,7 @@ export interface TodoItem {
   isReadding?: boolean;
 }
 
-export interface TodoSchema {
+export interface TodoList {
   id: string;
   todoHeader: string;
   todoItems: TodoItem[];
@@ -60,7 +60,7 @@ export interface TodoBodyProps {
 
 export interface TodoMainProps {
   todoTitle: string;
-  todoData: TodoSchema;
+  todoData: TodoList;
   color?: ColorName;
   containerClass?: string;
 }
