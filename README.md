@@ -13,7 +13,7 @@
 
 - [Svelte 5 & SvelteKit](https://svelte.dev/) (Fullstack Framework)
 - [BetterAuth](https://www.better-auth.com/) (Auth Framework)
-- [Supabase](https://supabase.com/) (Postgres Database)
+- [MongoDB](https://mongodb.com/) (No-SQL Database)
 - [Fontsource](https://fontsource.org/) (Self-hosted Fonts)
 - [TailwindCSS](https://tailwindcss.com/) (CSS Framework)
 - [ShadCN Svelte](https://www.shadcn-svelte.com/) (UI Components)

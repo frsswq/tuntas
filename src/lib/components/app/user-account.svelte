@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { authClient } from '@/lib/auth-client';
   import * as Avatar from '@/lib/components/ui/avatar/index';
   import { onMount } from 'svelte';
-  import { authClient } from '../../client/auth-client';
   import Button from '../ui/button/button.svelte';
 
   const session = authClient.useSession();

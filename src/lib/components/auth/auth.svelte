@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authClient, signIn } from '@/lib/client/auth-client';
+  import { authClient, signIn } from '@/lib/auth-client';
   import GithubIcon from '@/lib/components/icons/logos:github-icon.svelte';
   import GoogleIcon from '@/lib/components/icons/logos:google-icon.svelte';
   import Button from '../ui/button/button.svelte';
