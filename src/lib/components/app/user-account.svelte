@@ -1,9 +1,12 @@
 <script lang="ts">
   import * as Avatar from '@/lib/components/ui/avatar/index';
+  import { onMount } from 'svelte';
   import { authClient } from '../../client/auth-client';
   import Button from '../ui/button/button.svelte';
 
   const session = authClient.useSession();
+
+  onMount(() => {});
 </script>
 
 <div class="absolute top-6 right-6 flex items-center justify-center gap-x-1.5">
@@ -17,15 +20,23 @@
       >
         Sign Out
       </Button>
-      <Avatar.Root>
+      <Avatar.Root
+        class="border-crips flex size-8 items-center justify-center border-[0.5px] border-slate-300"
+      >
         <Avatar.Image
-          src={$session?.data?.user.image}
-          class="size-8.5"
-          alt={$session?.data?.user.name}
+          src={$session.data.user.image}
+          class="size-full"
+          alt={$session.data.user.name}
         />
         <Avatar.Fallback
-          class="border-crips size-8.5 rounded-full border-[0.5px] border-slate-300 bg-slate-200"
-        ></Avatar.Fallback>
+          class="size-full rounded-full bg-slate-200 text-xs leading-none text-black  select-none "
+        >
+          {$session.data.user.name
+            .split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase())
+            .slice(0, 2)
+            .join('') ?? ''}
+        </Avatar.Fallback>
       </Avatar.Root>
     </div>
   {:else}
