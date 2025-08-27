@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TodoCard } from '../types';
+  import type { TodoCard } from '../../types';
 
   let { currentIndex, TODO }: { currentIndex: number; TODO: TodoCard[] } = $props();
 </script>

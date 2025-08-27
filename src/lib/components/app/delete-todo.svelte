@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { cn } from '../utils';
-  import TrashIcon from './icons/material-symbols:delete-forever-outline-rounded.svelte';
-  import * as AlertDialog from './ui/alert-dialog/index';
-  import { buttonVariants } from './ui/button';
+  import { cn } from '../../utils';
+  import TrashIcon from '../icons/material-symbols:delete-forever-outline-rounded.svelte';
+  import * as AlertDialog from '../ui/alert-dialog/index';
+  import { buttonVariants } from '../ui/button';
 
   let open = $state(false);
   let { clearCurrentTodo }: { clearCurrentTodo: () => void } = $props();
 </script>
 
-<div class="absolute right-6 bottom-6 flex flex-col space-y-2">
+<div class="absolute bottom-6 left-6 flex flex-col space-y-2">
   <AlertDialog.Root bind:open>
     <AlertDialog.Trigger
       class={cn(

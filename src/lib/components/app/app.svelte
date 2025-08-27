@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Direction, TodoCard, TodoList } from '../types';
+  import type { Direction, TodoCard, TodoList } from '../../types';
+  import TodoMain from '../todo/todo-main.svelte';
   import DeleteTodo from './delete-todo.svelte';
   import DotsIndicator from './dots-indicator.svelte';
   import NavigateButton from './navigate-button.svelte';
-  import TodoMain from './todo/todo-main.svelte';
+  import UserAccount from './user-account.svelte';
 
   const TODO: TodoCard[] = [
     { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
@@ -232,6 +233,7 @@
       </div>
     {/each}
   </section>
+  <UserAccount />
   <NavigateButton {navigateCard} />
   <DotsIndicator {currentIndex} {TODO} />
   <DeleteTodo {clearCurrentTodo} />

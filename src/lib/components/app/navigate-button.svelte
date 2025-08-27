@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { cn } from '../utils';
-  import ChevronLeftIcon from './icons/mynaui:chevron-left.svelte';
-  import ChevronRightIcon from './icons/mynaui:chevron-right.svelte';
-  import Button from './ui/button/button.svelte';
-
-  import type { Direction } from '../types';
+  import type { Direction } from '@/lib/types';
+  import { cn } from '@/lib/utils';
+  import ChevronLeftIcon from '../icons/mynaui:chevron-left.svelte';
+  import ChevronRightIcon from '../icons/mynaui:chevron-right.svelte';
+  import Button from '../ui/button/button.svelte';
 
   let { navigateCard }: { navigateCard: (dir: Direction) => void } = $props();
 </script>
 
-<div class="absolute top-6 right-6 hidden gap-x-1.5 sm:flex">
+<div class="absolute right-6 bottom-6 hidden gap-x-1.5 sm:flex">
   {#each [ChevronLeftIcon, ChevronRightIcon] as Icon, index}
     <Button
       onclick={() => (index % 2 === 0 ? navigateCard('left') : navigateCard('right'))}
