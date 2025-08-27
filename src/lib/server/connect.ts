@@ -1,16 +1,8 @@
 import { MONGO_URI } from '$env/static/private';
-import mongoose, { Mongoose } from 'mongoose';
+import type { Db } from 'mongodb';
+import mongoose from 'mongoose';
 
-interface MongooseCache {
-  conn: Mongoose | null;
-  promise: Promise<Mongoose> | null;
-}
-
-declare global {
-  var mongoose: MongooseCache | undefined;
-}
-
-const cached = global.mongoose || { conn: null, promise: null };
+const cached = global.mongoose ?? { conn: null, promise: null };
 
 export async function dbConnect() {
   if (cached.conn) return cached.conn;
@@ -37,7 +29,7 @@ export async function dbConnect() {
 
 export async function getNativeClient() {
   const conn = await dbConnect();
-  return conn.connection.getClient().db() as unknown as import('mongodb').Db;
+  return conn.connection.db as unknown as Db;
 }
 
 global.mongoose = cached;
