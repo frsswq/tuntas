@@ -9,23 +9,23 @@ import { PUBLIC_GITHUB_CLIENT_ID, PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/pu
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import type { Db } from 'mongodb';
 import { MongoClient } from 'mongodb';
 
-let cachedDb: Db | null = null;
+let client: MongoClient;
 
-async function getDatabase() {
-  if (!cachedDb) {
-    const client = new MongoClient(MONGO_URI);
-    await client.connect();
-    console.log('Connected to MongoDB Atlas');
-    cachedDb = client.db();
-  }
-
-  return cachedDb;
+if (!globalThis._mongoClientPromise) {
+  client = new MongoClient(MONGO_URI);
+  globalThis._mongoClientPromise = client.connect();
 }
 
-const db = await getDatabase();
+const clientPromise: Promise<MongoClient> = globalThis._mongoClientPromise;
+
+async function getDb() {
+  const client = await clientPromise;
+  return client.db('tuntas');
+}
+
+const db = await getDb();
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,
