@@ -11,21 +11,8 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { MongoClient } from 'mongodb';
 
-let client: MongoClient;
-
-if (!globalThis._mongoClientPromise) {
-  client = new MongoClient(MONGO_URI);
-  globalThis._mongoClientPromise = client.connect();
-}
-
-const clientPromise: Promise<MongoClient> = globalThis._mongoClientPromise;
-
-async function getDb() {
-  const client = await clientPromise;
-  return client.db('tuntas');
-}
-
-const db = await getDb();
+const client = new MongoClient(MONGO_URI);
+const db = client.db();
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,
