@@ -16,11 +16,8 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { MongoClient } from 'mongodb';
 
 const client = new MongoClient(MONGO_URI, {
-  // TLS/SSL Configuration for Netlify
+  // Simplified TLS settings - remove conflicting options
   tls: true,
-  tlsInsecure: false,
-  tlsAllowInvalidCertificates: false,
-  tlsAllowInvalidHostnames: false,
 
   // Connection settings
   maxPoolSize: 1,
@@ -34,6 +31,7 @@ const client = new MongoClient(MONGO_URI, {
   retryWrites: true,
   retryReads: true
 });
+
 const db = client.db();
 
 export const auth = betterAuth({
