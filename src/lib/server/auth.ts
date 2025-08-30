@@ -15,26 +15,7 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(MONGO_URI, {
-  // Force specific TLS settings for AWS Lambda compatibility
-  sslValidate: false,
-  sslCA: undefined,
-
-  // Connection timeouts
-  serverSelectionTimeoutMS: 5000,
-  connectTimeoutMS: 10000,
-  socketTimeoutMS: 0,
-
-  // Pool settings for serverless
-  maxPoolSize: 1,
-  minPoolSize: 0,
-  maxIdleTimeMS: 30000,
-
-  // Additional options
-  retryWrites: true,
-  w: 'majority'
-});
-
+const client = new MongoClient(MONGO_URI);
 const db = client.db();
 
 export const auth = betterAuth({
