@@ -16,20 +16,23 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { MongoClient } from 'mongodb';
 
 const client = new MongoClient(MONGO_URI, {
-  // Simplified TLS settings - remove conflicting options
-  tls: true,
+  // Force specific TLS settings for AWS Lambda compatibility
+  sslValidate: false,
+  sslCA: undefined,
 
-  // Connection settings
+  // Connection timeouts
+  serverSelectionTimeoutMS: 5000,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 0,
+
+  // Pool settings for serverless
   maxPoolSize: 1,
   minPoolSize: 0,
   maxIdleTimeMS: 30000,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  connectTimeoutMS: 10000,
 
-  // Retry settings
+  // Additional options
   retryWrites: true,
-  retryReads: true
+  w: 'majority'
 });
 
 const db = client.db();
