@@ -1,10 +1,33 @@
 <script lang="ts">
-  import { authClient, signIn } from '@/lib/auth-client';
+  import { goto } from '$app/navigation';
+  import { authClient } from '@/lib/auth-client';
+  import LoadingIcon from '@/lib/components/icons/SvgSpinnersBarsRotateFade.svelte';
   import GithubIcon from '@/lib/components/icons/logos:github-icon.svelte';
   import GoogleIcon from '@/lib/components/icons/logos:google-icon.svelte';
+  import { delay } from '@/lib/utils';
   import Button from '../ui/button/button.svelte';
 
   const session = authClient.useSession();
+  let loadingProvider: 'google' | 'github' | null = $state(null);
+  const signIn = async (provider: 'google' | 'github') => {
+    try {
+      loadingProvider = provider;
+      await delay(10000);
+      const res = await authClient.signIn.social({
+        provider,
+        callbackURL: '/'
+      });
+      return res;
+    } finally {
+      loadingProvider = null;
+    }
+  };
+
+  $effect(() => {
+    if ($session.data?.user) {
+      goto('/');
+    }
+  });
 </script>
 
 <svelte:head>
@@ -21,18 +44,36 @@
     >
       <Button
         class="h-10 w-full cursor-pointer border-[0.5px] border-slate-300 bg-white p-0 text-base font-medium text-black hover:border-slate-400 hover:bg-slate-50"
-        onclick={async () => {
-          console.log('Google sign in button clicked!');
-          await signIn('google');
-        }}><GoogleIcon class="size-5" /> Continue with Google</Button
+        disabled={loadingProvider !== null}
+        onclick={() => signIn('google')}
       >
+        {#if loadingProvider === 'google'}
+          <LoadingIcon class="size-5" />
+        {:else}
+          <GoogleIcon class="size-5" />
+        {/if}
+        &nbsp;Continue with Google
+      </Button>
       <Button
-        class="h-10 w-full cursor-pointer border-[0.5px] border-slate-300 bg-white p-0 text-base font-medium text-black hover:border-slate-400 hover:bg-slate-50"
-        onclick={async () => {
-          console.log('Github sign in button clicked!');
-          await signIn('github');
-        }}><GithubIcon class="size-5" /> Continue with Github</Button
+        class="h-10 w-full cursor-pointer border-[0.5px] border-slate-300 bg-white p-0 text-base font-medium text-black hover:border-slate-400 hover:bg-slate-50 {loadingProvider &&
+          'bg-slate-50'}"
+        disabled={loadingProvider !== null}
+        onclick={() => signIn('github')}
       >
+        {#if loadingProvider === 'github'}
+          <LoadingIcon class="size-5" />
+        {:else}
+          <GithubIcon class="size-5" />
+        {/if}
+        &nbsp;Continue with Github
+      </Button>
+    </div>
+  {:else}
+    <div class="flex flex-col items-center gap-y-4">
+      <div
+        class="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"
+      ></div>
+      <p class="text-slate-600">You're already signed in. Redirecting...</p>
     </div>
   {/if}
 </main>
