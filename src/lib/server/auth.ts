@@ -13,37 +13,28 @@ import {
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { Db, MongoClient } from 'mongodb';
+import { MongoClient } from 'mongodb';
 
-let cachedClient: MongoClient | null = null;
-let cachedDb: Db | null = null;
+const client = new MongoClient(MONGO_URI, {
+  // TLS/SSL Configuration for Netlify
+  tls: true,
+  tlsInsecure: false,
+  tlsAllowInvalidCertificates: false,
+  tlsAllowInvalidHostnames: false,
 
-async function getMongoClient() {
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb };
-  }
+  // Connection settings
+  maxPoolSize: 1,
+  minPoolSize: 0,
+  maxIdleTimeMS: 30000,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+  connectTimeoutMS: 10000,
 
-  const client = new MongoClient(MONGO_URI, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-    connectTimeoutMS: 10000,
-    maxIdleTimeMS: 30000
-  });
-
-  try {
-    await client.connect();
-    const db = client.db();
-
-    cachedClient = client;
-    cachedDb = db;
-
-    return { client, db };
-  } catch (error) {
-    console.error('MongoDB connection failed:', error);
-    throw error;
-  }
-}
+  // Retry settings
+  retryWrites: true,
+  retryReads: true
+});
+const db = client.db();
 
 export const auth = betterAuth({
   appName: 'Tuntas',
@@ -51,7 +42,7 @@ export const auth = betterAuth({
   baseURL: PUBLIC_BETTER_AUTH_URL,
   basePath: '/api/auth',
   trustedOrigins: ['https://tuntas.farissaifuddin.id', 'http://localhost:3000'],
-  database: mongodbAdapter(cachedDb || (await getMongoClient()).db),
+  database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: false
   },
