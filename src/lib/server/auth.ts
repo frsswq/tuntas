@@ -39,13 +39,11 @@ export const auth = betterAuth({
     google: {
       prompt: 'select_account',
       clientId: PUBLIC_GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      redirectURI: '/'
+      clientSecret: GOOGLE_CLIENT_SECRET
     },
     github: {
       clientId: PUBLIC_GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_CLIENT_SECRET,
-      redirectURI: '/'
+      clientSecret: GITHUB_CLIENT_SECRET
     }
   },
   plugins: [sveltekitCookies(getRequestEvent)]
