@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Toaster } from '@/lib/components/ui/sonner/index';
   import '@fontsource-variable/inter';
   import '../app.css';
 
@@ -12,5 +13,7 @@
   //   }
   // });
 </script>
+
+<Toaster />
 
 {@render children?.()}
