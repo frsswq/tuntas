@@ -15,7 +15,10 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(MONGO_URI);
+const client = new MongoClient(MONGO_URI, {
+  serverSelectionTimeoutMS: 10000,
+  family: 4
+});
 const db = client.db();
 
 export const auth = betterAuth({
@@ -23,7 +26,11 @@ export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,
   baseURL: PUBLIC_BETTER_AUTH_URL,
   basePath: '/api/auth',
-  trustedOrigins: ['https://tuntas.farissaifuddin.id', 'http://localhost:3000'],
+  trustedOrigins: [
+    'https://tuntas.farissaifuddin.id',
+    'http://localhost:3000',
+    'https://localhost:3000'
+  ],
   database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: false
