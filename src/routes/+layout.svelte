@@ -4,14 +4,6 @@
   import '../app.css';
 
   let { children } = $props();
-
-  // const session = authClient.useSession();
-
-  // $effect(() => {
-  //   if (!$session.data?.user?.id && !$session.isPending && !$session.isRefetching) {
-  //     goto('/');
-  //   }
-  // });
 </script>
 
 <Toaster />
