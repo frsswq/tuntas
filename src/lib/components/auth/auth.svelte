@@ -4,7 +4,6 @@
   import LoadingIcon from '@/lib/components/icons/SvgSpinnersBarsRotateFade.svelte';
   import GithubIcon from '@/lib/components/icons/logos:github-icon.svelte';
   import GoogleIcon from '@/lib/components/icons/logos:google-icon.svelte';
-  import { delay } from '@/lib/utils';
   import Button from '../ui/button/button.svelte';
 
   const session = authClient.useSession();
@@ -12,7 +11,6 @@
   const signIn = async (provider: 'google' | 'github') => {
     try {
       loadingProvider = provider;
-      await delay(10000);
       const res = await authClient.signIn.social({
         provider,
         callbackURL: '/'
