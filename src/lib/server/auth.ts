@@ -23,7 +23,7 @@ export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,
   baseURL: PUBLIC_BETTER_AUTH_URL,
   basePath: '/api/auth',
-  trustedOrigins: ['https://tuntas.farissaifuddin.id', 'http://localhost:300'],
+  trustedOrigins: ['https://tuntas.farissaifuddin.id', 'http://localhost:3000'],
   database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: false
