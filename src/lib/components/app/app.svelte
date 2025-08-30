@@ -9,13 +9,6 @@
 
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
-
-  onMount(() => {
-    if (page.url.searchParams.has('code') || page.url.searchParams.has('state')) {
-      goto('/', { replaceState: true });
-    }
-  });
-
   const TODO: TodoCard[] = [
     { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
     { todoTitle: 'Next', color: 'teal', bg: 'bg-teal-50' },
@@ -212,6 +205,12 @@
   onMount(() => {
     if (carouselEl) {
       updateCardPositions(0);
+    }
+  });
+
+  $effect(() => {
+    if (page.url.searchParams.has('code') || page.url.searchParams.has('state')) {
+      goto('/', { replaceState: true });
     }
   });
 </script>
