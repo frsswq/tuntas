@@ -14,62 +14,37 @@ export interface ColorClasses {
   sky: ColorSet;
 }
 
-// not types
-export const colorClasses: ColorClasses = {
-  slate: {
-    bg: 'bg-white',
-    border: 'border-slate-300',
-    border_b: 'border-b-slate-300',
-    text: 'text-slate-600',
-    caret: 'caret-slate-600'
-  },
-  teal: {
-    bg: 'bg-teal-50',
-    border: 'border-teal-300',
-    border_b: 'border-b-teal-300',
-    text: 'text-teal-600',
-    caret: 'caret-teal-600'
-  },
-  sky: {
-    bg: 'bg-sky-50',
-    border: 'border-sky-300',
-    border_b: 'border-b-sky-300',
-    text: 'text-sky-600',
-    caret: 'caret-sky-600'
-  }
-};
-
 export type ColorName = keyof ColorClasses;
 
 export interface TodoItem {
-  id: string;
+  todoId: string;
   text: string;
   isRemoving?: boolean;
   isReadding?: boolean;
 }
 
 export interface TodoList {
-  id: string;
+  _id?: string;
+  listId: string;
   todoHeader: string;
   todoItems: TodoItem[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface TodoBodyProps {
+  index: number;
   color?: ColorName;
-  todoTitle: string;
-  todoItems: TodoItem[];
 }
 
 export interface TodoMainProps {
-  todoTitle: string;
-  todoData: TodoList;
+  index: number;
   color?: ColorName;
   containerClass?: string;
 }
 
 export interface TodoHeaderProps {
-  todoTitle: string;
-  todoHeader: string;
+  index: number;
   color?: ColorName;
 }
 

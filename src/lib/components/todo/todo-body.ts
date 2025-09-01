@@ -62,7 +62,7 @@ export const handleCheckboxChange = async (checked: boolean, todoItem: TodoItem)
 
   await delay(REMOVING_DURATION);
 
-  todoItem.id = `todo-${Date.now()}`;
+  todoItem.todoId = `todo-${Date.now()}`;
   todoItem.text = '';
   todoItem.isRemoving = false;
   todoItem.isReadding = true;

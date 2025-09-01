@@ -1,11 +1,16 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { Direction, TodoCard, TodoList } from '../../types';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import { TODOS } from '@/lib/consts';
+  import { getContext, onMount } from 'svelte';
+  import { toast } from 'svelte-sonner';
+  import type { Direction, TodoSchema } from '../../types';
   import TodoMain from '../todo/todo-main.svelte';
   import DeleteTodo from './delete-todo.svelte';
   import DotsIndicator from './dots-indicator.svelte';
   import NavigateButton from './navigate-button.svelte';
   import UserAccount from './user-account.svelte';
+
   // flow
   // 1. fetch data from mongoDB if session exist
   // 2. fetch data from localStorage if no session data
@@ -13,28 +18,11 @@
   // catch
   // still make empty todo if session / localStorage data empty (new user)
 
-  import { goto } from '$app/navigation';
-  import { page } from '$app/state';
-
-  import { toast } from 'svelte-sonner';
-
-  const TODO: TodoCard[] = [
-    { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
-    { todoTitle: 'Next', color: 'teal', bg: 'bg-teal-50' },
-    { todoTitle: 'Someday', color: 'sky', bg: 'bg-sky-50' }
-  ];
+  const todos = getContext<TodoSchema[]>('todos');
 
   const TRANSITION_DURATION = 300;
   const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
   const DRAGGING_THRESHOLD = 15;
-
-  let todoDataArray = $state<TodoList[]>(
-    TODO.map(({ todoTitle }) => ({
-      id: `todos-${todoTitle}`,
-      todoHeader: '',
-      todoItems: []
-    }))
-  );
 
   let currentIndex = $state(0);
   let isDragging = $state(false);
@@ -45,8 +33,8 @@
   let carouselEl: HTMLElement | null;
 
   const normalizeIndex = (index: number) => {
-    if (index < 0) return TODO.length - 1;
-    if (index >= TODO.length) return 0;
+    if (index < 0) return TODOS.length - 1;
+    if (index >= TODOS.length) return 0;
     return index;
   };
 
@@ -70,7 +58,7 @@
 
   const forEachCard = (callback: (card: HTMLElement, index: number) => void) => {
     if (!carouselEl) return;
-    TODO.forEach((_, index) => {
+    TODOS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
       if (card) callback(card, index);
     });
@@ -88,7 +76,7 @@
   const updateCardPositions = (dragOffset = 0, direction: Direction = 'none') => {
     if (!carouselEl) return;
 
-    TODO.forEach((_, index) => {
+    TODOS.forEach((_, index) => {
       const card = carouselEl?.children[index] as HTMLElement;
 
       if (!card) return;
@@ -202,9 +190,9 @@
   };
 
   const clearCurrentTodo = () => {
-    todoDataArray[currentIndex].todoHeader = '';
-    todoDataArray[currentIndex].todoItems = Array.from({ length: 10 }, (_, index) => ({
-      id: `todo-${Date.now()}-${index}`,
+    todos[currentIndex].todoHeader = '';
+    todos[currentIndex].todoItems = Array.from({ length: 10 }, (_, index) => ({
+      todoId: `todo-${Date.now()}-${index}`,
       text: '',
       isRemoving: false,
       isReadding: false
@@ -233,27 +221,22 @@
     onpointermove={handlePointerMove}
     onpointerup={handlePointerUp}
     role="presentation"
-    aria-label="Todo TODO carousel"
+    aria-label="Todo TODOS carousel"
     aria-roledescription="carousel"
     class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-x-hidden overflow-y-scroll {isDragging &&
       'cursor-grabbing touch-pan-y'}"
   >
-    {#each TODO as { todoTitle, color, bg }, index}
+    {#each TODOS as { todoTitle, color, bg }, index}
       <div
         class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 z-1 will-change-transform`}
       >
-        <TodoMain
-          {todoTitle}
-          containerClass={`${bg}`}
-          {color}
-          bind:todoData={todoDataArray[index]}
-        />
+        <TodoMain {todoTitle} containerClass={`${bg}`} {color} {index} />
       </div>
     {/each}
   </section>
   <UserAccount />
   <NavigateButton {navigateCard} />
-  <DotsIndicator {currentIndex} {TODO} />
+  <DotsIndicator {currentIndex} {TODOS} />
   <DeleteTodo {clearCurrentTodo} />
 </main>
 
