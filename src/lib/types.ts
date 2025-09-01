@@ -1,3 +1,5 @@
+import type { ObjectId } from 'mongodb';
+
 interface ColorSet {
   bg?: string;
   border: string;
@@ -78,3 +80,13 @@ export interface TodoCard {
 }
 
 export type Direction = 'none' | 'left' | 'right';
+
+export interface TodoSchema {
+  _id?: ObjectId;
+  userId?: string;
+  listId: string;
+  todoHeader: string;
+  todoItems: TodoItem[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}

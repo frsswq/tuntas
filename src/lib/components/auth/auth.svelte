@@ -14,7 +14,7 @@
       loadingProvider = provider;
       const res = await authClient.signIn.social({
         provider,
-        callbackURL: '/'
+        callbackURL: '/?signin=success'
       });
       return res;
     } finally {
@@ -44,7 +44,7 @@
       <h1 class="text-xl font-semibold">Sign in to Tuntas</h1>
     </div>
     <div
-      class="border-crips flex h-full max-h-[300px] w-full max-w-[300px] flex-col items-center justify-center gap-y-2 rounded-sm border-[0.5px] border-slate-300 bg-slate-100 px-5 py-4 sm:max-w-[400px] sm:px-10 sm:py-8"
+      class="border-crips flex h-full max-h-[300px] w-full max-w-[calc(100%-60px)] flex-col items-center justify-center gap-y-2 rounded-sm border-[0.5px] border-slate-300 bg-slate-100 px-5 py-6 xs:max-w-[400px] xs:px-7.5"
     >
       <Button
         class="h-10 w-full cursor-pointer border-[0.5px] border-slate-300 bg-white p-0 text-base font-medium text-black hover:border-slate-400 hover:bg-slate-50"

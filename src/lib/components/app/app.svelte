@@ -6,9 +6,18 @@
   import DotsIndicator from './dots-indicator.svelte';
   import NavigateButton from './navigate-button.svelte';
   import UserAccount from './user-account.svelte';
+  // flow
+  // 1. fetch data from mongoDB if session exist
+  // 2. fetch data from localStorage if no session data
+  // 3. create empty Todo if no localStorage data
+  // catch
+  // still make empty todo if session / localStorage data empty (new user)
 
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
+
+  import { toast } from 'svelte-sonner';
+
   const TODO: TodoCard[] = [
     { todoTitle: 'Today', color: 'slate', bg: 'bg-white' },
     { todoTitle: 'Next', color: 'teal', bg: 'bg-teal-50' },
@@ -206,11 +215,12 @@
     if (carouselEl) {
       updateCardPositions(0);
     }
-  });
 
-  $effect(() => {
-    if (page.url.searchParams.has('code') || page.url.searchParams.has('state')) {
+    const signIn = page.url.searchParams.get('signin');
+
+    if (signIn === 'success') {
       goto('/', { replaceState: true });
+      toast.success('Signed in successfully');
     }
   });
 </script>
