@@ -226,11 +226,11 @@
     class="relative min-h-dvh max-w-full min-w-full cursor-grab touch-pan-y overflow-x-hidden overflow-y-scroll {isDragging &&
       'cursor-grabbing touch-pan-y'}"
   >
-    {#each TODOS as { todoTitle, color, bg }, index}
+    {#each TODOS as { color, bg }, index}
       <div
         class={`${index === currentIndex ? 'block' : 'hidden'} absolute inset-0 z-1 will-change-transform`}
       >
-        <TodoMain {todoTitle} containerClass={`${bg}`} {color} {index} />
+        <TodoMain containerClass={`${bg}`} {color} {index} />
       </div>
     {/each}
   </section>
