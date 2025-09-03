@@ -17,9 +17,7 @@
         todoHeader: '',
         todoItems: Array.from({ length: 10 }, (_, index) => ({
           todoId: `todo-${Date.now()}-${index}`,
-          text: '',
-          isRemoving: false,
-          isReadding: false
+          text: ''
         }))
       };
     })

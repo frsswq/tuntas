@@ -4,6 +4,7 @@
   import { type TodoBodyProps, type TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { getContext, onMount } from 'svelte';
+  import { SvelteMap } from 'svelte/reactivity';
   import Textarea from '../ui/textarea/textarea.svelte';
   import {
     handleCheckboxChange,
@@ -13,6 +14,9 @@
   } from './todo-body';
 
   let { color = 'slate', index }: TodoBodyProps = $props();
+
+  // map with id key
+  export const animating = new SvelteMap<string, 'removing' | 'readding' | null>();
 
   onMount(() => {
     const textareas = document.querySelectorAll(
@@ -30,13 +34,15 @@
 
 <div class="flex flex-col overflow-hidden pb-3">
   {#each todos[index].todoItems as todo (todo.todoId)}
+    {@const isRemoving = animating.get(todo.todoId) === 'removing'}
+    {@const isReadding = animating.get(todo.todoId) === 'readding'}
     <div
       role="group"
       class={cn(
         `transition-[transform, opacity] inset-0 flex w-full max-w-full items-start gap-x-2 overflow-hidden bg-transparent bg-clip-border px-2.5 duration-300 ease-out`,
-        todo.isRemoving && 'pointer-events-none origin-right scale-95 opacity-0',
-        todo.isReadding && 'pointer-events-none -translate-x-10 scale-95 opacity-0',
-        !todo.isRemoving && !todo.isReadding && 'origin-left translate-x-0 scale-100 opacity-100'
+        isRemoving && 'pointer-events-none origin-right scale-95 opacity-0',
+        isReadding && 'pointer-events-none -translate-x-10 scale-95 opacity-0',
+        !isRemoving && !isReadding && 'origin-left translate-x-0 scale-100 opacity-100'
       )}
     >
       <Checkbox
@@ -46,8 +52,8 @@
           `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white}`
         )}
         iconClass={`size-4 ${colorClasses[color].text}`}
-        onCheckedChange={(checked) => handleCheckboxChange(checked, todo)}
-        disabled={todo.isRemoving || todo.isReadding}
+        onCheckedChange={(checked) => handleCheckboxChange(checked, todo, animating)}
+        disabled={isRemoving || isReadding}
       />
       <Textarea
         data-id={todo.todoId}
@@ -63,7 +69,7 @@
         autocomplete="off"
         rows={1}
         bind:value={todo.text}
-        disabled={todo.isRemoving || todo.isReadding}
+        disabled={isRemoving || isReadding}
       />
     </div>
   {/each}

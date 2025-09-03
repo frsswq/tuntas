@@ -19,8 +19,6 @@ export type ColorName = keyof ColorClasses;
 export interface TodoItem {
   todoId: string;
   text: string;
-  isRemoving?: boolean;
-  isReadding?: boolean;
 }
 
 export interface TodoList {

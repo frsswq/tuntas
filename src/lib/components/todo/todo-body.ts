@@ -1,5 +1,6 @@
 import type { TodoItem } from '@/lib/types';
 import { delay } from '@/lib/utils';
+import type { SvelteMap } from 'svelte/reactivity';
 
 const MAX_LINES = 3;
 const LINE_HEIGHT = 28;
@@ -56,17 +57,20 @@ export const handleTextareaInput = async (e: Event, todoItem: TodoItem): Promise
   todoItem.text = el.value;
 };
 
-export const handleCheckboxChange = async (checked: boolean, todoItem: TodoItem): Promise<void> => {
+export const handleCheckboxChange = async (
+  checked: boolean,
+  todoItem: TodoItem,
+  animating: SvelteMap<string, 'removing' | 'readding' | null>
+): Promise<void> => {
   if (!checked) return;
-  todoItem.isRemoving = true;
+  animating.set(todoItem.todoId, 'removing');
 
   await delay(REMOVING_DURATION);
 
   todoItem.todoId = `todo-${Date.now()}`;
   todoItem.text = '';
-  todoItem.isRemoving = false;
-  todoItem.isReadding = true;
+  animating.set(todoItem.todoId, 'readding');
 
   await delay(READDING_DELAY);
-  todoItem.isReadding = false;
+  animating.set(todoItem.todoId, null);
 };
