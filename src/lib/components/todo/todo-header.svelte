@@ -2,14 +2,16 @@
   import { colorClasses, TODOS } from '@/lib/consts';
   import { cn } from '@/lib/utils';
   import { getContext } from 'svelte';
-  import type { TodoHeaderProps, TodoSchema } from '../../types';
+  import type { TodoHeaderProps, TodoItem, TodoSchema } from '../../types';
   import Input from '../ui/input/input.svelte';
 
   let { color = 'slate', index }: TodoHeaderProps = $props();
 
-  const { todos, markChanged } = getContext<{ todos: TodoSchema[]; markChanged: () => void }>(
-    'todos'
-  );
+  const { todos, updateTodo } = getContext<{
+    todos: TodoSchema[];
+    updateTodo: (index: number, updated: Partial<TodoSchema>) => void;
+    updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => void;
+  }>('todos');
 </script>
 
 <div
@@ -28,6 +30,8 @@
     )}
     bind:value={todos[index].todoHeader}
     maxlength={8}
-    oninput={markChanged}
+    oninput={(e) => {
+      updateTodo(index, { todoHeader: e.currentTarget.value });
+    }}
   />
 </div>

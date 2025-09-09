@@ -17,10 +17,6 @@
   let saveTimeout: NodeJS.Timeout;
   let todosVersion = $state(0);
 
-  const markChanged = () => {
-    todosVersion = todosVersion + 1;
-  };
-
   let todos = $state<TodoSchema[]>(
     TODOS.map((todo) => {
       const lowerTitle = todo.todoTitle.toLowerCase();
@@ -124,7 +120,26 @@
   });
 
   // KV
-  setContext('todos', { todos, markChanged });
+  setContext('todos', {
+    todos,
+    updateTodo: (index: number, updated: Partial<TodoSchema>) => {
+      todos = todos.map((t, i) => (i === index ? { ...t, ...updated } : t));
+      todosVersion++;
+    },
+    updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => {
+      todos = todos.map((t, i) =>
+        i === index
+          ? {
+              ...t,
+              todoItems: t.todoItems.map((item, j) =>
+                j === itemIndex ? { ...item, ...updated } : item
+              )
+            }
+          : t
+      );
+      todosVersion++;
+    }
+  });
 
   let { children } = $props();
 </script>

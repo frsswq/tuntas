@@ -1,7 +1,7 @@
 <script lang="ts">
   import Checkbox from '@/lib/components/ui/checkbox/checkbox.svelte';
   import { colorClasses, TODOS } from '@/lib/consts';
-  import { type TodoBodyProps, type TodoSchema } from '@/lib/types';
+  import type { TodoBodyProps, TodoItem, TodoSchema } from '@/lib/types';
   import { cn } from '@/lib/utils';
   import { getContext, onMount } from 'svelte';
   import { SvelteMap } from 'svelte/reactivity';
@@ -29,13 +29,15 @@
     });
   });
 
-  const { todos, markChanged } = getContext<{ todos: TodoSchema[]; markChanged: () => void }>(
-    'todos'
-  );
+  const { todos, updateTodo, updateTodoItem } = getContext<{
+    todos: TodoSchema[];
+    updateTodo: (index: number, updated: Partial<TodoSchema>) => void;
+    updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => void;
+  }>('todos');
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
-  {#each todos[index].todoItems as todo (todo.todoId)}
+  {#each todos[index].todoItems as todo, itemIndex}
     {@const isRemoving = animating.get(todo.todoId) === 'removing'}
     {@const isReadding = animating.get(todo.todoId) === 'readding'}
     <div
@@ -67,7 +69,7 @@
         style={`background-image: repeating-linear-gradient(transparent, transparent 1.7rem, var(--color-${color}-300) 1.7rem, var(--color-${color}-300) 1.75rem);`}
         oninput={(e) => {
           handleTextareaInput(e, todo);
-          markChanged();
+          updateTodoItem(index, itemIndex, { text: e.currentTarget.value });
         }}
         onkeydown={(e) => handleTextareaKeydown(e)}
         spellcheck="false"
