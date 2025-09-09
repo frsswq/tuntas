@@ -29,7 +29,9 @@
     });
   });
 
-  const todos = getContext<TodoSchema[]>('todos');
+  const { todos, markChanged } = getContext<{ todos: TodoSchema[]; markChanged: () => void }>(
+    'todos'
+  );
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
@@ -63,7 +65,10 @@
           'focus-visible:border-0 focus-visible:ring-0 focus-visible:outline-none'
         )}
         style={`background-image: repeating-linear-gradient(transparent, transparent 1.7rem, var(--color-${color}-300) 1.7rem, var(--color-${color}-300) 1.75rem);`}
-        oninput={(e) => handleTextareaInput(e, todo)}
+        oninput={(e) => {
+          handleTextareaInput(e, todo);
+          markChanged();
+        }}
         onkeydown={(e) => handleTextareaKeydown(e)}
         spellcheck="false"
         autocomplete="off"

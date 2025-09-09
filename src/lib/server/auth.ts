@@ -19,7 +19,8 @@ const client = new MongoClient(MONGO_URI, {
   serverSelectionTimeoutMS: 10000,
   family: 4
 });
-const db = client.db();
+
+const db = client.db('tuntas');
 
 export const auth = betterAuth({
   appName: 'Tuntas',

@@ -7,7 +7,9 @@
 
   let { color = 'slate', index }: TodoHeaderProps = $props();
 
-  const todos = getContext<TodoSchema[]>('todos');
+  const { todos, markChanged } = getContext<{ todos: TodoSchema[]; markChanged: () => void }>(
+    'todos'
+  );
 </script>
 
 <div
@@ -22,9 +24,10 @@
   <Input
     id={`${TODOS[index].todoTitle}-detail`}
     class={cn(
-      `h-4  max-w-[100px] overflow-hidden rounded-none border-0 border-b-1 text-ellipsis whitespace-nowrap ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none  focus-visible:ring-0 focus-visible:${colorClasses[color].border_b}`
+      `h-4  max-w-[100px] overflow-hidden rounded-none border-0 border-b-1 text-ellipsis whitespace-nowrap ${colorClasses[color].border_b} px-0.5 text-center leading-none ${colorClasses[color].text} ${colorClasses[color].caret} ${colorClasses[color].bg} shadow-none focus-visible:ring-0 focus-visible:${colorClasses[color].border_b}`
     )}
     bind:value={todos[index].todoHeader}
     maxlength={8}
+    oninput={markChanged}
   />
 </div>
