@@ -53,9 +53,10 @@
         aria-label={`${TODOS[index].todoTitle} Checkbox ${todo.todoId}`}
         class={cn(
           `peer mt-0.5 size-5 rounded-xs border ${colorClasses[color].border} shadow-none`,
-          `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:bg-white}`
+          `data-[state=checked]:${colorClasses[color].border} data-[state=checked]:${colorClasses[color].bg}`
         )}
         iconClass={`size-4 ${colorClasses[color].text}`}
+        checked={animating.get(todo.todoId) == 'removing'}
         onCheckedChange={(checked) => handleCheckboxChange(checked, todo, animating)}
         disabled={isRemoving || isReadding}
       />
