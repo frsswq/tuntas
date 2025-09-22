@@ -13,7 +13,8 @@
 
 - [Svelte 5 & SvelteKit](https://svelte.dev/) (Fullstack Framework)
 - [BetterAuth](https://www.better-auth.com/) (Auth Framework)
-- [MongoDB](https://mongodb.com/) (No-SQL Database)
+- [Turso](https://mongodb.com/) (SQLite Cloud Database)
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [Fontsource](https://fontsource.org/) (Self-hosted Fonts)
 - [TailwindCSS](https://tailwindcss.com/) (CSS Framework)
 - [ShadCN Svelte](https://www.shadcn-svelte.com/) (UI Components)

@@ -4,7 +4,7 @@
   import { TODOS } from '@/lib/consts';
   import { getContext, onMount } from 'svelte';
   import { toast } from 'svelte-sonner';
-  import type { Direction, TodoSchema } from '../../types';
+  import type { Direction, TodoItem, TodoSchema } from '../../types';
   import TodoMain from '../todo/todo-main.svelte';
   import DeleteTodo from './delete-todo.svelte';
   import DotsIndicator from './dots-indicator.svelte';
@@ -12,13 +12,19 @@
   import UserAccount from './user-account.svelte';
 
   // flow
-  // 1. fetch data from mongoDB if session exist
+  // 1. fetch data from turso if session exist
   // 2. fetch data from localStorage if no session data
   // 3. create empty Todo if no localStorage data
   // catch
   // still make empty todo if session / localStorage data empty (new user)
 
-  const todos = getContext<TodoSchema[]>('todos');
+  const todos = getContext<{
+    todos: TodoSchema[];
+    isLoading: boolean;
+    isSaving: boolean;
+    updateTodo: (index: number, updated: Partial<TodoSchema>) => void;
+    updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => void;
+  }>('todos');
 
   const TRANSITION_DURATION = 300;
   const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
@@ -190,11 +196,16 @@
   };
 
   const clearCurrentTodo = () => {
-    todos[currentIndex].todoHeader = '';
-    todos[currentIndex].todoItems = Array.from({ length: 10 }, (_, index) => ({
-      todoId: `todo-${Date.now()}-${index}`,
+    const timestamp = Date.now();
+    const newTodoItems = Array.from({ length: 10 }, (_, index) => ({
+      todoId: `todo-${timestamp}-${currentIndex}-${index}`,
       text: ''
     }));
+
+    todos.updateTodo(currentIndex, {
+      todoHeader: '',
+      todoItems: newTodoItems
+    });
   };
 
   onMount(() => {

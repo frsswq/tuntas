@@ -1,15 +1,10 @@
-import { MONGO_URI } from '$env/static/private';
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { TURSO_AUTH_TOKEN, TURSO_DATABASE_URL } from '$env/static/private';
 
-const client = new MongoClient(MONGO_URI, {
-  serverSelectionTimeoutMS: 10000,
-  family: 4,
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true
+import { drizzle } from 'drizzle-orm/libsql';
+
+export const db = drizzle({
+  connection: {
+    url: TURSO_DATABASE_URL,
+    authToken: TURSO_AUTH_TOKEN
   }
 });
-
-await client.connect();
-export const db = client.db('tuntas');

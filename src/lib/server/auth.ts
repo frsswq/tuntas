@@ -3,7 +3,8 @@ import {
   BETTER_AUTH_SECRET,
   GITHUB_CLIENT_SECRET,
   GOOGLE_CLIENT_SECRET,
-  MONGO_URI
+  TURSO_AUTH_TOKEN,
+  TURSO_DATABASE_URL
 } from '$env/static/private';
 import {
   PUBLIC_BETTER_AUTH_URL,
@@ -11,16 +12,14 @@ import {
   PUBLIC_GOOGLE_CLIENT_ID
 } from '$env/static/public';
 import { betterAuth } from 'better-auth';
-import { mongodbAdapter } from 'better-auth/adapters/mongodb';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
-import { MongoClient } from 'mongodb';
+import { db } from './db';
+import * as schema from './schema';
 
-const client = new MongoClient(MONGO_URI, {
-  serverSelectionTimeoutMS: 10000,
-  family: 4
-});
-
-const db = client.db('tuntas');
+if (!TURSO_DATABASE_URL && !TURSO_AUTH_TOKEN) {
+  console.error('Missing database envs: TURSO_DATABASE_URL or TURSO_AUTH_TOKEN');
+}
 
 export const auth = betterAuth({
   appName: 'Tuntas',
@@ -32,7 +31,10 @@ export const auth = betterAuth({
     'http://localhost:3000',
     'https://localhost:3000'
   ],
-  database: mongodbAdapter(db),
+  database: drizzleAdapter(db, {
+    provider: 'sqlite',
+    schema
+  }),
   emailAndPassword: {
     enabled: false
   },

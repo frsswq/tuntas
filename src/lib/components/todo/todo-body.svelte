@@ -29,15 +29,17 @@
     });
   });
 
-  const { todos, updateTodo, updateTodoItem } = getContext<{
+  const todos = getContext<{
     todos: TodoSchema[];
+    isLoading: boolean;
+    isSaving: boolean;
     updateTodo: (index: number, updated: Partial<TodoSchema>) => void;
     updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => void;
   }>('todos');
 </script>
 
 <div class="flex flex-col overflow-hidden pb-3">
-  {#each todos[index].todoItems as todo, itemIndex}
+  {#each todos.todos[index].todoItems as todo, itemIndex}
     {@const isRemoving = animating.get(todo.todoId) === 'removing'}
     {@const isReadding = animating.get(todo.todoId) === 'readding'}
     <div
@@ -70,7 +72,7 @@
         style={`background-image: repeating-linear-gradient(transparent, transparent 1.7rem, var(--color-${color}-300) 1.7rem, var(--color-${color}-300) 1.75rem);`}
         oninput={(e) => {
           handleTextareaInput(e, todo);
-          updateTodoItem(index, itemIndex, { text: e.currentTarget.value });
+          todos.updateTodoItem(index, itemIndex, { text: e.currentTarget.value });
         }}
         onkeydown={(e) => handleTextareaKeydown(e)}
         spellcheck="false"
