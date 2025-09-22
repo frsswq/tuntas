@@ -202,12 +202,14 @@
     updateTodo: (index: number, updated: Partial<TodoSchema>) => {
       if (index < 0 || index >= todos.length) return;
       todos[index] = { ...todos[index], ...updated };
+      todosVersion++;
     },
     updateTodoItem: (index: number, itemIndex: number, updated: Partial<TodoItem>) => {
       todos[index].todoItems[itemIndex] = {
         ...todos[index].todoItems[itemIndex],
         ...updated
       };
+      todosVersion++;
     }
   });
 
